@@ -13,6 +13,8 @@ namespace OS_Prog4
         public ProcessScheduler(Scheduler scheduler, ObservableCollection<Process> processes)
         {
             _processes = processes;
+            _scheduleType = scheduler;
+
             if (_processes == null)
             {
                 _processes = new ObservableCollection<Process> ();
@@ -21,7 +23,8 @@ namespace OS_Prog4
 
         public void AddProcess(Process process)
         {
-            
+            _processes.Add(process);
+            Reorder();
         }
 
         private void Reset()
@@ -164,14 +167,28 @@ namespace OS_Prog4
             return ScheduledList;
         }
 
-        private void Reorder()
+        public void Reorder()
         {
-           //_processes =  new ObservableCollection<Process>(_processes.OrderBy(o => o.Priority));
+            switch (_scheduleType)
+            {
+                case Scheduler.Priority:
+                    ReorderByPriority();
+                    break;
+                case Scheduler.RoundRobin:
+                    ReorderByRoundRobin(Quantum);
+                    break;
+                case Scheduler.ShortestJobFirst:
+                    ReorderByShortestJobFirst();
+                    break;
+            }
         }
 
         //I'm not sure if Joe will have to bind to an ObservableCollection property or if he can just bind to a return type of a function
         public ObservableCollection<Process> ScheduledList { get; set; }
 
+        public uint Quantum { get; set; }
+
+        private Scheduler _scheduleType;
         private ObservableCollection<Process> _processes;
         private uint _currentTime;
     }
