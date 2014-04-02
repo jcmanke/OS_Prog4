@@ -48,7 +48,7 @@ namespace OS_Prog4
                     //If the starttime was before the current time and the process hasn't executed yet
                     if (_processes[i].StartTime <= _currentTime && !_processes[i].Executed)
                     {
-                        Process queuedProcess = _processes[i];
+                        Process queuedProcess = new Process(_processes[i]);
 
                         queuedProcess.StartTime = _currentTime;
 
@@ -59,7 +59,7 @@ namespace OS_Prog4
                         _processes[i].Executed = true;
 
                         //Go back to the beginning element (since the list is ordered by duration times
-                        i = 0;
+                        i = -1;
 
                         //Add the process to the list
                         ScheduledList.Add(queuedProcess);
@@ -84,11 +84,11 @@ namespace OS_Prog4
                 {
                     if (_processes[i].StartTime <= _currentTime && !_processes[i].Executed)
                     {
-                        Process queuedProcess = _processes[i];
+                        Process queuedProcess = new Process(_processes[i]);
                         queuedProcess.StartTime = _currentTime;
                         _currentTime += _processes[i].Duration;
                         _processes[i].Executed = true;
-                        i = 0;
+                        i = -1;
                         ScheduledList.Add(queuedProcess);
                     }
                 }
