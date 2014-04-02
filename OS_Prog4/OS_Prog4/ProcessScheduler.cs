@@ -48,8 +48,9 @@ namespace OS_Prog4
                     //If the starttime was before the current time and the process hasn't executed yet
                     if (_processes[i].StartTime <= _currentTime && !_processes[i].Executed)
                     {
-                        //Add the process to the list
-                        ScheduledList.Add(_processes[i]);
+                        Process queuedProcess = _processes[i];
+
+                        queuedProcess.StartTime = _currentTime;
 
                         //Add it's duration to the current time
                         _currentTime += _processes[i].Duration;
@@ -59,6 +60,9 @@ namespace OS_Prog4
 
                         //Go back to the beginning element (since the list is ordered by duration times
                         i = 0;
+
+                        //Add the process to the list
+                        ScheduledList.Add(queuedProcess);
                     }
                 }
 
@@ -80,10 +84,12 @@ namespace OS_Prog4
                 {
                     if (_processes[i].StartTime <= _currentTime && !_processes[i].Executed)
                     {
-                        ScheduledList.Add(_processes[i]);
+                        Process queuedProcess = _processes[i];
+                        queuedProcess.StartTime = _currentTime;
                         _currentTime += _processes[i].Duration;
                         _processes[i].Executed = true;
                         i = 0;
+                        ScheduledList.Add(queuedProcess);
                     }
                 }
                 _currentTime++;
@@ -93,28 +99,67 @@ namespace OS_Prog4
         }
 
 
-        public ObservableCollection<Process> ReorderByRoundRobin(int quantum)
+        public ObservableCollection<Process> ReorderByRoundRobin(uint quantum)
         {
+            if (quantum == 0)
+            {
+                throw new ArgumentException("Quantum can not be zero!");
+            }
+
             _processes = new ObservableCollection<Process>(_processes.OrderBy(o => o.StartTime));
             Reset();
 
-
+            uint totalDuration = 0;
             for (int i = 0; i < _processes.Count; i++)
             {
-                if (_processes[i].StartTime <= _currentTime && _processes[i].Duration != 0)
+                totalDuration += _processes[i].Duration;
+            }
+
+            //Since the durations will be modified directly, I'm creating a temporary array
+            ObservableCollection<Process> tempProcesses = _processes;
+
+            uint currentDuration = 0;
+            uint prevDuration = 0;
+            while (currentDuration != totalDuration)
+            {
+                //The list is in order of startTimes
+                //Running through the list once will be one rotation 
+                for (int i = 0; i < tempProcesses.Count; i++)
                 {
-                    ScheduledList.Add(_processes[i]);
-                    if (_processes[i].Duration < quantum)
+
+                    if (tempProcesses[i].StartTime <= _currentTime && tempProcesses[i].Duration != 0)
                     {
-                        _currentTime += _processes[i].Duration;
-                    }
-                    else
-                    {
-                        _currentTime += quantum;
+                        Process queuedProcess = new Process(tempProcesses[i]);
+                        queuedProcess.StartTime = _currentTime;
+
+                        if (tempProcesses[i].Duration < quantum)
+                        {
+                            _currentTime += tempProcesses[i].Duration;
+                            currentDuration += tempProcesses[i].Duration;
+                            queuedProcess.Duration = tempProcesses[i].Duration;
+                            tempProcesses[i].Duration = 0;
+                        }
+                        else
+                        {
+                            _currentTime += quantum;
+                            currentDuration += quantum;
+                            queuedProcess.Duration = quantum;
+                            tempProcesses[i].Duration -= quantum;
+                        }
+
+                        ScheduledList.Add(queuedProcess);
                     }
                 }
+
+                //If we went through the for loop without adding anything to the queue,
+                //There's an empty timeslot where no processes can execute
+                if (prevDuration == currentDuration)
+                {
+                    _currentTime++;
+                }
+               // Console.WriteLine("Current Duration: {0}   Previous Duration: {1}    CurrentTime: {2}", currentDuration, prevDuration, _currentTime);
+                prevDuration = currentDuration;
             }
-            _currentTime++;
 
             return ScheduledList;
         }
@@ -128,6 +173,6 @@ namespace OS_Prog4
         public ObservableCollection<Process> ScheduledList { get; set; }
 
         private ObservableCollection<Process> _processes;
-        private int _currentTime;
+        private uint _currentTime;
     }
 }

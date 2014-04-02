@@ -8,7 +8,7 @@ namespace OS_Prog4
 {
     class Process
     {
-        public Process(int pId, int startTime, int duration, int priority)
+        public Process(uint pId, uint startTime, uint duration, uint priority)
         {
             PId = pId;
             StartTime = startTime;
@@ -16,10 +16,19 @@ namespace OS_Prog4
             Priority = priority;
         }
 
-        public int StartTime { get; set; }
-        public int Duration { get; set; }
-        public int PId { get; set; }
-        public int Priority { get; set; }
+        public Process(Process process)
+        {
+            StartTime = process.StartTime;
+            Duration = process.Duration;
+            PId = process.PId;
+            Priority = process.Priority;
+            Executed = process.Executed;
+        }
+
+        public uint StartTime { get; set; }
+        public uint Duration { get; set; }
+        public uint PId { get; set; }
+        public uint Priority { get; set; }
         public bool Executed { get; set; }
 
         public override string ToString()

@@ -38,7 +38,7 @@ namespace OS_Prog4
             processes.Add(p5);
             ProcessScheduler pScheduler = new ProcessScheduler(Scheduler.Priority, processes);
 
-            ObservableCollection<Process> reordered = pScheduler.ReorderByShortestJobFirst();
+            ObservableCollection<Process> reordered = pScheduler.ReorderByRoundRobin(2);
 
             for (int i = 0; i < reordered.Count; i++)
             {
