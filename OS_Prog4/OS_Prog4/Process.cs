@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OS_Prog4
 {
-    class Process
+    public class Process
     {
         public Process(uint pId, uint startTime, uint duration, uint priority)
         {

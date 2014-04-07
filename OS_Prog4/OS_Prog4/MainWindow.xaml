@@ -17,12 +17,12 @@
 
         <StackPanel Grid.Column="1">
             <Label FontSize="25" HorizontalAlignment="Center">Processes</Label>
-            <DataGrid Height="700">
+            <DataGrid Height="700" ItemsSource="{Binding Processes}" AutoGenerateColumns="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Process Name"/>
-                    <DataGridTextColumn Header="Arrival Time"/>
-                    <DataGridTextColumn Header="Priority"/>
-                    <DataGridTextColumn Header="Duration"/>
+                    <DataGridTextColumn Header="Process Name" Binding="{Binding PId}"/>
+                    <DataGridTextColumn Header="Arrival Time" Binding="{Binding StartTime}"/>
+                    <DataGridTextColumn Header="Priority" Binding="{Binding Priority}"/>
+                    <DataGridTextColumn Header="Duration" Binding="{Binding Duration}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
