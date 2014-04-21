@@ -67,6 +67,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PageTable.cs" />
     <Compile Include="Process.cs" />
     <Compile Include="ProcessScheduler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
