@@ -21,22 +21,26 @@ namespace OS_Prog4
     /// </summary>
     public partial class MainWindow : Window
     {
+        public ObservableCollection<Process> Processes { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
+
             Process p1 = new Process(1, 0, 10, 3);
             Process p2 = new Process(2, 0, 1, 1);
             Process p3 = new Process(3, 0, 2, 4);
             Process p4 = new Process(4, 0, 1, 5);
             Process p5 = new Process(5, 0, 5, 2);
 
-            ObservableCollection<Process> processes = new ObservableCollection<Process>();
-            processes.Add(p1);
-            processes.Add(p2);
-            processes.Add(p3);
-            processes.Add(p4);
-            processes.Add(p5);
-            ProcessScheduler pScheduler = new ProcessScheduler(Scheduler.Priority, processes);
+            Processes = new ObservableCollection<Process>();
+            Processes.Add(p1);
+            Processes.Add(p2);
+            Processes.Add(p3);
+            Processes.Add(p4);
+            Processes.Add(p5);
+            ProcessScheduler pScheduler = new ProcessScheduler(Scheduler.Priority, Processes);
 
             ObservableCollection<Process> reordered = pScheduler.ReorderByRoundRobin(2);
 
