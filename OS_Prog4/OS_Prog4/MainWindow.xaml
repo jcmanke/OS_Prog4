@@ -11,13 +11,24 @@
                     <ColumnDefinition Width="400"/>
                 </Grid.ColumnDefinitions>
 
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="0">
+                    <Label Content="First kind"/>
+                    <Rectangle VerticalAlignment="Center" Fill="Beige" Stroke="Black" Height="30" Margin="0,0,0,25"/>
+                    
+                    <Label Content="second kind"/>
+                    <Rectangle VerticalAlignment="Center" Fill="AliceBlue" Stroke="Black" Height="30"  Margin="0,0,0,25"/>
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="40" Margin="0,0,0,25">
-                    <Button Content="Add a Process" Margin="10,0,10,0"/>
-                    <Button Content="Generate Processes" Margin="10,0,10,0"/>
-                    <Button Content="Clear Processes" Margin="10,0,10,0"/>
+                    <Label Content="third kind"/>
+                    <Rectangle VerticalAlignment="Center" Fill="BlueViolet" Stroke="Black" Height="30" Margin="0,0,0,25"/>
                 </StackPanel>
-
+                
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="40" Margin="0,0,0,25">
+                    <Button Name="AddProcessButton" Content="Add a Process" Margin="10,0,10,0" Click="AddProcessButton_Click_1" />
+                    <Button Name="GenerateProcessButton" Content="Generate Processes" Margin="10,0,10,0" Click="GenerateProcessButton_Click_1"/>
+                    <Button Name="ClearProcessButton" Content="Clear Processes" Margin="10,0,10,0" Click="ClearProcessButton_Click_1" />
+                </StackPanel>
+                
+                
                 <StackPanel Grid.Column="1">
                     <Label FontSize="25" HorizontalAlignment="Center">Processes</Label>
                     <DataGrid Height="700" ItemsSource="{Binding Processes}" AutoGenerateColumns="False">

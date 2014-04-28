@@ -49,5 +49,20 @@ namespace OS_Prog4
                 Console.WriteLine(reordered[i].ToString());
             }
         }
+
+        private void AddProcessButton_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void GenerateProcessButton_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ClearProcessButton_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
