@@ -7,150 +7,362 @@ using System.Threading.Tasks;
 
 namespace OS_Prog4
 {
-    public enum Scheduler { RoundRobin, Priority, ShortestJobFirst };
+    /**************************************************************************
+     * Author: Josh Schultz
+     * 
+     * Date: May 1, 2014
+     * 
+     * Class:          ProcessScheduler
+     * Inherits From:  (nothing)
+     * Imeplements:    (nothing)
+     * 
+     * Description:  This class is used to monitor processes, and provide three
+     *               different methods to schedule those processes.  Each process
+     *               contains a PID, start time, duration, and priority.  
+     *               Processes are scheduled by shortest job first, priority, and
+     *               round robin.  For each of these three scheduling schemes, 
+     *               a property exposes the ordering of these lists.
+     *               
+     * Constructor: public ProcessScheduler(uint quantum)
+     * 
+     * Methods: public void AddProcess(Process process)
+     *          public void ClearProcesses()
+     *          public void GenerateProcesses(uint number)
+     *          
+     *          private void Reset()
+     *          private void ReorderByShortestJobFirst()
+     *          private void ReorderByPriority()
+     *          private void ReorderByRoundRobin(uint quantum)
+     *          private void Reorder()
+     *          
+    **************************************************************************/
+
     class ProcessScheduler
     {
-        public ProcessScheduler(Scheduler scheduler, ObservableCollection<Process> processes)
-        {
-            _processes = processes;
-            _scheduleType = scheduler;
 
-            if (_processes == null)
-            {
-                _processes = new ObservableCollection<Process> ();
-            }
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: April 14, 2014
+        //
+        //Description:  The constructor simply initializes the public properties
+        //
+        //Parameters:   quantum - Number to rotate for round robin
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
+        public ProcessScheduler(uint quantum)
+        {
+            Quantum = quantum;
+
+            SJFSchedule = new ObservableCollection<Process>();
+            PrioritySchedule = new ObservableCollection<Process>();
+            RoundRobinSchedule = new ObservableCollection<Process>();
+            Processes = new ObservableCollection<Process>();
         }
 
+
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: April 14, 2014
+        //
+        //Description:  Given a process, this method simply inserts it into the
+        //              list and reorders the schedules
+        //
+        //Parameters:   process - The process to add to the list
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
         public void AddProcess(Process process)
         {
-            _processes.Add(process);
+            Processes.Add(process);
+
+            //Update the three schedulers
             Reorder();
         }
 
+
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: May 1, 2014
+        //
+        //Description: Removes all processes from the list
+        //
+        //Parameters:  (nothing)
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
+        public void ClearProcesses()
+        {
+            Processes.Clear();
+            SJFSchedule.Clear();
+            PrioritySchedule.Clear();
+            RoundRobinSchedule.Clear();
+        }
+
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: May 1, 2014
+        //
+        //Description:  Generates random processes with a random priority,
+        //              start time and duration.
+        //
+        //Parameters:   number - Number of processes to generate
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
+        public void GenerateProcesses(uint number)
+        {
+            //Remove the existing processes before adding more
+            Processes.Clear();
+
+            for (uint i = 0; i < number; i++)
+            {
+                //Avoid creating the same random number
+                System.Threading.Thread.Sleep(20);
+
+                Random rand = new Random();
+
+                //Randomness
+                uint priority = (uint)rand.Next(0,5);
+                uint startTime = (uint)rand.Next(0,20);
+                uint duration = (uint)rand.Next(1,6);
+
+                //Add the process to the list
+                Process process = new Process(i+1,startTime,duration,priority);
+                Processes.Add(process);
+            }
+
+            //Update the schedules for the three schedulers
+            //Reorder();
+        }
+
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: April 14, 2014
+        //
+        //Description:  Before updating the schedulers, reset the time, and
+        //              verify the processes have not executed.
+        //
+        //Parameters:  (nothing)
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
         private void Reset()
         {
-            ScheduledList = new ObservableCollection<Process>();
             _currentTime = 0;
 
             //Reset the executed state
-            foreach (Process p in _processes)
+            foreach (Process p in Processes)
             {
                 p.Executed = false;
             }
         }
 
-        public ObservableCollection<Process> ReorderByShortestJobFirst()
-        {
-            _processes = new ObservableCollection<Process>(_processes.OrderBy(o => o.Duration));
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: April 14, 2014
+        //
+        //Description:  Using the processes from this class, this method
+        //              orders the SJFSchedule property based on the shortest
+        //              job first scheduling scheme.
+        //
+        //Parameters:  (nothing)
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
+        private void ReorderByShortestJobFirst()
+        {            
+            //Reset the currentTime, and verify all the processes have not executed
             Reset();
 
-            while (_processes.Count != ScheduledList.Count)
+            //Clear the existing schedule
+            SJFSchedule.Clear();
+
+            //Order the processes by duration
+            ObservableCollection<Process> orderedProcesses = new ObservableCollection<Process>(Processes.OrderBy(o => o.Duration).ToList());
+
+            //Continue to cycle through until all of the processes are scheduled
+            while (orderedProcesses.Count != SJFSchedule.Count)
             {
-                for (int i = 0; i < _processes.Count; i++)
+                for (int i = 0; i < orderedProcesses.Count; i++)
                 {
                     //If the starttime was before the current time and the process hasn't executed yet
-                    if (_processes[i].StartTime <= _currentTime && !_processes[i].Executed)
+                    if (orderedProcesses[i].StartTime <= _currentTime && !orderedProcesses[i].Executed)
                     {
-                        Process queuedProcess = new Process(_processes[i]);
+                        Process queuedProcess = new Process(orderedProcesses[i]);
 
+                        //Set the starttime to the current time
                         queuedProcess.StartTime = _currentTime;
 
                         //Add it's duration to the current time
-                        _currentTime += _processes[i].Duration;
+                        _currentTime += queuedProcess.Duration;
 
                         //Mark it as executed
-                        _processes[i].Executed = true;
+                        orderedProcesses[i].Executed = true;
 
-                        //Go back to the beginning element (since the list is ordered by duration times
+                        //Go back to the beginning element (since the list is ordered by duration times)
                         i = -1;
 
                         //Add the process to the list
-                        ScheduledList.Add(queuedProcess);
+                        SJFSchedule.Add(queuedProcess);
                     }
                 }
 
                 //Assuming the entire list can not start, increment the current time
                 _currentTime++;
             }
-
-            return ScheduledList;
         }
 
-        public ObservableCollection<Process> ReorderByPriority()
+
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: April 14, 2014
+        //
+        //Description:  Using the Processes property, this method reorders
+        //              the prioritySchedule based on the priority scheduling
+        //              scheme.
+        //
+        //Parameters:  (nothing)
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
+        private void ReorderByPriority()
         {
-            _processes = new ObservableCollection<Process>(_processes.OrderBy(o => o.Priority));
+            //Reset the currentTime, and verify all the processes have not executed
             Reset();
 
-            while (_processes.Count != ScheduledList.Count)
+            //Clear the existing schedule
+            PrioritySchedule.Clear();
+
+            //Reorder the processes by priority
+            ObservableCollection<Process> orderedProcesses = new ObservableCollection<Process>(Processes.OrderBy(o => o.Priority).ToList());
+
+            //Continue to schedule processes until all have been scheduled
+            while (orderedProcesses.Count != PrioritySchedule.Count)
             {
-                for (int i = 0; i < _processes.Count; i++)
+                for (int i = 0; i < orderedProcesses.Count; i++)
                 {
-                    if (_processes[i].StartTime <= _currentTime && !_processes[i].Executed)
+                    //If the current process is before the start time and yet executed
+                    if (orderedProcesses[i].StartTime <= _currentTime && !orderedProcesses[i].Executed)
                     {
-                        Process queuedProcess = new Process(_processes[i]);
+                        Process queuedProcess = new Process(orderedProcesses[i]);
+
+                        //Set the start time of the process
                         queuedProcess.StartTime = _currentTime;
-                        _currentTime += _processes[i].Duration;
-                        _processes[i].Executed = true;
+
+                        //Add the process's duration to the current time
+                        _currentTime += orderedProcesses[i].Duration;
+
+                        //Set the process as executed
+                        orderedProcesses[i].Executed = true;
+
+                        //Start at the top of the priority list
                         i = -1;
-                        ScheduledList.Add(queuedProcess);
+
+                        //Add the process to the scheduled list
+                        PrioritySchedule.Add(queuedProcess);
                     }
                 }
+
+                //If no items were able to execute, increment the time
                 _currentTime++;
             }
-
-            return ScheduledList;
         }
 
-
-        public ObservableCollection<Process> ReorderByRoundRobin(uint quantum)
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: April 14, 2014
+        //
+        //Description:  Using the Processes property, this method orders the
+        //              RoundRobinSchedule property to follow a round robin
+        //              scheduling scheme.  The quantum is determined by the
+        //              only parameter.
+        //
+        //Parameters:  quantum - time chunks for round robin
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
+        private void ReorderByRoundRobin(uint quantum)
         {
+            //Verify the quantum value is valid
             if (quantum == 0)
             {
-                throw new ArgumentException("Quantum can not be zero!");
+                quantum = 1;
+                Console.WriteLine("Defaulting to 1 quantum value");
             }
 
-            _processes = new ObservableCollection<Process>(_processes.OrderBy(o => o.StartTime));
+            //Reset the currentTime, and verify all the processes have not executed
             Reset();
 
+            //Clear the existing schedule
+            RoundRobinSchedule.Clear();
+
+            //Order the processes by start time
+            ObservableCollection<Process> orderedProcesses = new ObservableCollection<Process>(Processes.OrderBy(o => o.StartTime).ToList());
+
+            //Count the total duration of the processes
             uint totalDuration = 0;
-            for (int i = 0; i < _processes.Count; i++)
+            for (int i = 0; i < orderedProcesses.Count; i++)
             {
-                totalDuration += _processes[i].Duration;
+                totalDuration += orderedProcesses[i].Duration;
             }
 
-            //Since the durations will be modified directly, I'm creating a temporary array
-            ObservableCollection<Process> tempProcesses = _processes;
-
+            //Total duration currently scheduled 
             uint currentDuration = 0;
+
+            //Last iteration through the process list's total duration
+            //This is used to determine if the time should be incremented after
+            //The entire list is executed
             uint prevDuration = 0;
+
+            //Continue to order the processes until the entire duration is used
             while (currentDuration != totalDuration)
             {
                 //The list is in order of startTimes
                 //Running through the list once will be one rotation 
-                for (int i = 0; i < tempProcesses.Count; i++)
+                for (int i = 0; i < orderedProcesses.Count; i++)
                 {
-
-                    if (tempProcesses[i].StartTime <= _currentTime && tempProcesses[i].Duration != 0)
+                    //If the process's start time is before the current time and there is time
+                    //remaining to execute
+                    if (orderedProcesses[i].StartTime <= _currentTime && orderedProcesses[i].Duration != 0)
                     {
-                        Process queuedProcess = new Process(tempProcesses[i]);
+                        Process queuedProcess = new Process(orderedProcesses[i]);
+
+                        //Set the start time to the current time
                         queuedProcess.StartTime = _currentTime;
 
-                        if (tempProcesses[i].Duration < quantum)
+                        if (orderedProcesses[i].Duration < quantum)
                         {
-                            _currentTime += tempProcesses[i].Duration;
-                            currentDuration += tempProcesses[i].Duration;
-                            queuedProcess.Duration = tempProcesses[i].Duration;
-                            tempProcesses[i].Duration = 0;
+                            //Add the duration to the current time/duration
+                            _currentTime += orderedProcesses[i].Duration;
+                            currentDuration += orderedProcesses[i].Duration;
+
+                            //Set the list of processes duration to zero
+                            orderedProcesses[i].Duration = 0;
                         }
                         else
                         {
+                            //Add the quantum time to the current time/duration
                             _currentTime += quantum;
                             currentDuration += quantum;
+
+                            //Set the queued processes duration 
                             queuedProcess.Duration = quantum;
-                            tempProcesses[i].Duration -= quantum;
+
+                            //Subtract the quantum from the list of processes
+                            orderedProcesses[i].Duration -= quantum;
                         }
 
-                        ScheduledList.Add(queuedProcess);
+                        //Add the process to the scheduled list
+                        RoundRobinSchedule.Add(queuedProcess);
                     }
                 }
 
@@ -160,36 +372,43 @@ namespace OS_Prog4
                 {
                     _currentTime++;
                 }
-               // Console.WriteLine("Current Duration: {0}   Previous Duration: {1}    CurrentTime: {2}", currentDuration, prevDuration, _currentTime);
+
                 prevDuration = currentDuration;
             }
-
-            return ScheduledList;
         }
 
-        public void Reorder()
+
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: April 14, 2014
+        //
+        //Description:  Updates the SJFSchedule, PrioritySchedule, and
+        //              RoundRobinSchedule properties.
+        //
+        //Parameters:  (nothing)
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
+        private void Reorder()
         {
-            switch (_scheduleType)
-            {
-                case Scheduler.Priority:
-                    ReorderByPriority();
-                    break;
-                case Scheduler.RoundRobin:
-                    ReorderByRoundRobin(Quantum);
-                    break;
-                case Scheduler.ShortestJobFirst:
-                    ReorderByShortestJobFirst();
-                    break;
-            }
+            ReorderByPriority();
+            ReorderByRoundRobin(Quantum);
+            ReorderByShortestJobFirst();
         }
 
-        //I'm not sure if Joe will have to bind to an ObservableCollection property or if he can just bind to a return type of a function
-        public ObservableCollection<Process> ScheduledList { get; set; }
+        //The three scheduler lists
+        public ObservableCollection<Process> SJFSchedule { get; set; }
+        public ObservableCollection<Process> PrioritySchedule { get; set; }
+        public ObservableCollection<Process> RoundRobinSchedule { get; set; }
 
+        //Original Process list
+        public ObservableCollection<Process> Processes { get; private set; }
+
+        //Time chunks for Round Robin
         public uint Quantum { get; set; }
 
-        private Scheduler _scheduleType;
-        private ObservableCollection<Process> _processes;
+        //Used when scheduling the SJF, Priority, and RR
         private uint _currentTime;
     }
 }

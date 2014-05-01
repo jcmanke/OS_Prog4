@@ -21,48 +21,81 @@ namespace OS_Prog4
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ObservableCollection<Process> Processes { get; set; }
+        private ProcessScheduler _scheduler;
 
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = this;
+            //DataContext = this;
+           
+            //Quantum default value of 2
+            _scheduler = new ProcessScheduler(2);
 
-            Process p1 = new Process(1, 0, 10, 3);
-            Process p2 = new Process(2, 0, 1, 1);
-            Process p3 = new Process(3, 0, 2, 4);
-            Process p4 = new Process(4, 0, 1, 5);
-            Process p5 = new Process(5, 0, 5, 2);
+            //Set the datacontext to this single scheduler
+            DataContext = _scheduler;
 
-            Processes = new ObservableCollection<Process>();
-            Processes.Add(p1);
-            Processes.Add(p2);
-            Processes.Add(p3);
-            Processes.Add(p4);
-            Processes.Add(p5);
-            ProcessScheduler pScheduler = new ProcessScheduler(Scheduler.Priority, Processes);
-
-            ObservableCollection<Process> reordered = pScheduler.ReorderByRoundRobin(2);
-
-            for (int i = 0; i < reordered.Count; i++)
-            {
-                Console.WriteLine(reordered[i].ToString());
-            }
         }
 
+
+        //*******************************************************************//
+        //Author: 
+        //Date: 
+        //Description:
+        //Parameters:
+        //Returns:
+        //*******************************************************************//
         private void AddProcessButton_Click_1(object sender, RoutedEventArgs e)
         {
+            //Make a window to take in the start time, duration, and priority
 
+            uint pId = (uint)_scheduler.Processes.Count + 1;
+            //uint priority =
+            //uint startTime =
+            //uint duration =
+
+            //Add the process to the scheduler
+            //Process process = new Process(pId, startTime, duration, priority);
+            //_scheduler.AddProcess(process);
         }
 
+
+        //*******************************************************************//
+        //Author: Josh Schultz/Joe Manke
+        //
+        //Date: May 1, 2014
+        //
+        //Description: Once the Generate Processes button is pressed, this callback
+        //             creates 7 random processes.
+        //
+        //Parameters:  sender - The GUI button object
+        //                  e - The event object
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
         private void GenerateProcessButton_Click_1(object sender, RoutedEventArgs e)
         {
-
+            //Generate 7 random processes
+            _scheduler.GenerateProcesses(7);
         }
 
+
+        //*******************************************************************//
+        //Author: Josh Schultz/Joe Manke
+        //
+        //Date: May 1, 2014
+        //
+        //Description: Once the Clear Processes button is pressed, this function
+        //             removed all of the processes from the list.
+        //
+        //Parameters:  sender - The GUI button object
+        //                  e - The event object
+        //
+        //Returns: (nothing)
+        //*******************************************************************//
         private void ClearProcessButton_Click_1(object sender, RoutedEventArgs e)
         {
-
+            //Clear all of the processes
+            _scheduler.ClearProcesses();
         }
     }
 }
