@@ -137,7 +137,7 @@ namespace OS_Prog4
             }
 
             //Update the schedules for the three schedulers
-            //Reorder();
+            Reorder();
         }
 
         //*******************************************************************//
@@ -306,7 +306,15 @@ namespace OS_Prog4
             RoundRobinSchedule.Clear();
 
             //Order the processes by start time
-            ObservableCollection<Process> orderedProcesses = new ObservableCollection<Process>(Processes.OrderBy(o => o.StartTime).ToList());
+            ObservableCollection<Process> ordered = new ObservableCollection<Process>(Processes.OrderBy(o => o.StartTime).ToList());
+
+            //The bindings to the GUI are still there for each process, so each one must be remade
+            ObservableCollection<Process> orderedProcesses = new ObservableCollection<Process>();
+            foreach (Process p in ordered)
+            {
+                Process copy = new Process(p);
+                orderedProcesses.Add(copy);
+            }
 
             //Count the total duration of the processes
             uint totalDuration = 0;
