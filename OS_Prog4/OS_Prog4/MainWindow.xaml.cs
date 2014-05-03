@@ -45,16 +45,27 @@ namespace OS_Prog4
         //*******************************************************************//
         private void AddProcessButton_Click_1(object sender, RoutedEventArgs e)
         {
-            //Make a window to take in the start time, duration, and priority
-
             uint pId = (uint)_scheduler.Processes.Count + 1;
-            //uint priority =
-            //uint startTime =
-            //uint duration =
 
-            //Add the process to the scheduler
-            //Process process = new Process(pId, startTime, duration, priority);
-            //_scheduler.AddProcess(process);
+            //Make a window to take in the start time, duration, and priority
+            AddProcessDialog dialog = new AddProcessDialog(pId);
+
+            dialog.ShowDialog();
+            
+            uint priority, startTime, duration;
+
+            if (UInt32.TryParse(dialog.Priority.Text, out priority) &&
+                UInt32.TryParse(dialog.StartTime.Text, out startTime) &&
+                UInt32.TryParse(dialog.Duration.Text, out duration))
+            {
+                //Add the process to the scheduler
+                Process process = new Process(pId, startTime, duration, priority);
+                _scheduler.AddProcess(process);
+            }
+            else if(!dialog.Cancelled)
+            {
+                MessageBox.Show("Error parsing inputs. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
 
@@ -73,6 +84,11 @@ namespace OS_Prog4
         //*******************************************************************//
         private void GenerateProcessButton_Click_1(object sender, RoutedEventArgs e)
         {
+            //clear existing processes from GUI
+            SJFPanel.Children.Clear();
+            PriorityPanel.Children.Clear();
+            RRPanel.Children.Clear();
+
             //Generate 7 random processes
             _scheduler.GenerateProcesses(7);
         }

@@ -11,3 +11,5 @@ C:\Users\7021950\Documents\GitHub\OS_Prog4\OS_Prog4\OS_Prog4\bin\Debug\OS_Prog4.
 C:\Users\7021950\Documents\GitHub\OS_Prog4\OS_Prog4\OS_Prog4\bin\Debug\OS_Prog4.pdb
 C:\Users\7021950\Documents\GitHub\OS_Prog4\OS_Prog4\OS_Prog4\obj\Debug\OS_Prog4.exe
 C:\Users\7021950\Documents\GitHub\OS_Prog4\OS_Prog4\OS_Prog4\obj\Debug\OS_Prog4.pdb
+C:\Users\7021950\Documents\GitHub\OS_Prog4\OS_Prog4\OS_Prog4\obj\Debug\AddProcessDialog.baml
+C:\Users\7021950\Documents\GitHub\OS_Prog4\OS_Prog4\OS_Prog4\obj\Debug\AddProcessDialog.g.cs

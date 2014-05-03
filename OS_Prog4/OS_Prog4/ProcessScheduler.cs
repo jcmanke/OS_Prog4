@@ -222,6 +222,7 @@ namespace OS_Prog4
 
             //draw gantt chart in MainWindow
             long totalDuration = SJFSchedule.Sum(o => o.Duration);
+            _listener.SJFPanel.Children.Clear();
 
             foreach (Process process in SJFSchedule)
             {
@@ -293,6 +294,7 @@ namespace OS_Prog4
 
             //draw gantt chart in MainWindow
             long totalDuration = PrioritySchedule.Sum(o => o.Duration);
+            _listener.PriorityPanel.Children.Clear();
 
             foreach (Process process in PrioritySchedule)
             {
@@ -415,6 +417,7 @@ namespace OS_Prog4
             }
 
             //draw gantt chart in MainWindow
+            _listener.RRPanel.Children.Clear();
 
             foreach (Process process in RoundRobinSchedule)
             {
