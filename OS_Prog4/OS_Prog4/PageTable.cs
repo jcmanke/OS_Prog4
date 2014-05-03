@@ -8,10 +8,17 @@ namespace OS_Prog4
 {
     class PageTable
     {
-        char[] pageTable = new char[]
+        private char[] pageTable = new char[]
         {
               '-','-','-','-','-','-','-','-' 
         };
+        public char[] _PageTable
+        {
+            get
+            {
+                return pageTable;
+            }
+        }
 
         int[,] frameList = new int[8,4]
         {
@@ -21,10 +28,14 @@ namespace OS_Prog4
         int nextFrame = 0;
         bool showString = false;
 
-        int[,] buffer = new int[2, 2]
+        private int[] buffer = new int[4] { -1, -1, -1, -1 };
+        public int[] TLB
         {
-            {-1,-1},{-1,-1}
-        };
+            get
+            {
+                return buffer;
+            }
+        }
 
         static string notFound = "Value was not found in the TLB";
 
@@ -42,7 +53,7 @@ namespace OS_Prog4
 
             if (frame == '-')
             {
-                frame = (char) nextFrame;
+                frame = nextFrame.ToString()[0];
                 pageTable[page] = frame;
                 nextFrame++;
             }
@@ -51,22 +62,22 @@ namespace OS_Prog4
             updateTLB(page);
 
             // The value to be put in the values position in the picture.
-            return frameList[(int) Char.GetNumericValue(frame), offset];
+            return frameList[(int)Char.GetNumericValue(frame), offset];
         }
 
         public void updateTLB(int page)
         {
-            if (buffer[0,0] == page || buffer[1,0] == page)
+            if (buffer[0] == page || buffer[2] == page)
                 return;
-            buffer[1,0] = buffer[0,0];
-            buffer[1, 1] = buffer[0, 1];
-            buffer[0, 0] = page;
-            buffer[0, 1] = (int) Char.GetNumericValue(pageTable[page]);
+            buffer[2] = buffer[0];
+            buffer[3] = buffer[1];
+            buffer[0] = page;
+            buffer[1] = (int) Char.GetNumericValue(pageTable[page]);
         }
 
         public bool checkTLB(int page)
         {
-            if (buffer[0, 0] == page || buffer[1, 0] == page)
+            if (buffer[0] == page || buffer[2] == page)
                 return true;
             return false;
         }

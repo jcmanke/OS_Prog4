@@ -22,6 +22,7 @@ namespace OS_Prog4
     public partial class MainWindow : Window
     {
         private ProcessScheduler _scheduler;
+        private PageTable _pageTable;
 
         //*******************************************************************//
         //Author: Joe Manke, Josh Schultz
@@ -40,6 +41,8 @@ namespace OS_Prog4
            
             //Quantum default value of 2
             _scheduler = new ProcessScheduler(2, this);
+
+            _pageTable = new PageTable();
         }
 
 
@@ -151,10 +154,32 @@ namespace OS_Prog4
             }
             else if (MemoryTab.IsSelected)
             {
+                DataContext = _pageTable;
             }
             else if (PageTab.IsSelected)
             {
+                
+            }
+        }
 
+        private void GoButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            int page, offset;
+
+            try
+            {
+                if (Int32.TryParse(PageTextbox.Text, out page) && Int32.TryParse(FrameTextbox.Text, out offset))
+                {
+                    retVal.Content = _pageTable.goPushed(page, offset);
+                }
+                else
+                {
+                    MessageBox.Show("Error parsing inputs. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Error parsing inputs. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

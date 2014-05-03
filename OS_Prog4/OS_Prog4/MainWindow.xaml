@@ -31,7 +31,7 @@
                 
                 <StackPanel Grid.Column="1">
                     <Label FontSize="25" HorizontalAlignment="Center">Processes</Label>
-                    <DataGrid Height="400" Width="320" ItemsSource="{Binding Processes}" AutoGenerateColumns="False">
+                    <DataGrid Height="400" Width="330" ItemsSource="{Binding Processes}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="PID" Binding="{Binding PId}" Width="80"/>
                             <DataGridTextColumn Header="Arrival Time" Binding="{Binding StartTime}" Width="80"/>
@@ -45,6 +45,17 @@
         
         <TabItem Header="Memory Management" Name="MemoryTab">
             <Grid>
+                <Grid.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <!-- All rows -->
+                        <Setter Property="BorderBrush" Value="Black" />
+                        <Setter Property="BorderThickness" Value="1" />
+                    </Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                    </Style>
+                </Grid.Resources>
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
@@ -55,48 +66,280 @@
                     <RowDefinition Height="30"></RowDefinition>
                 </Grid.RowDefinitions>
                 
-                <StackPanel Grid.Column="0" Grid.Row="0">
+                <StackPanel Grid.Column="0" Grid.Row="0" Width="150">
                     <Label Content="Page Table"/>
-                    <DataGrid>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Page"/>
-                            <DataGridTextColumn Header="Frame"/>
-                            <DataGridCheckBoxColumn Header="Valid"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <ItemsControl Name="PageTableItemControl">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Label Grid.Row="0" Content="Page"/>
+                            <Border Grid.Row="1">
+                                <TextBlock Text="0"/>
+                            </Border>
+                            <Border Grid.Row="2">
+                                <TextBlock Text="1"/>
+                            </Border>
+                            <Border Grid.Row="3">
+                                <TextBlock Text="2"/>
+                            </Border>
+                            <Border Grid.Row="4">
+                                <TextBlock Text="3"/>
+                            </Border>
+                            <Border Grid.Row="5">
+                                <TextBlock Text="4"/>
+                            </Border>
+                            <Border Grid.Row="6">
+                                <TextBlock Text="5"/>
+                            </Border>
+                            <Border Grid.Row="7">
+                                <TextBlock Text="6"/>
+                            </Border>
+                            <Border Grid.Row="8">
+                                <TextBlock Text="7"/>
+                            </Border>
+                            
+                            <Label Grid.Row="0" Grid.Column="1" Content="Frame"/>
+                            <Border Grid.Row="1" Grid.Column="1">
+                                <TextBlock Text="{Binding _PageTable[0]}"/>
+                            </Border>
+                            <Border Grid.Row="2" Grid.Column="1">
+                                <TextBlock Text="{Binding _PageTable[1]}"/>
+                            </Border>
+                            <Border Grid.Row="3" Grid.Column="1">
+                                <TextBlock Text="{Binding _PageTable[2]}"/>
+                            </Border>
+                            <Border Grid.Row="4" Grid.Column="1">
+                                <TextBlock Text="{Binding _PageTable[3]}"/>
+                            </Border>
+                            <Border Grid.Row="5" Grid.Column="1">
+                                <TextBlock Text="{Binding _PageTable[4]}"/>
+                            </Border>
+                            <Border Grid.Row="6" Grid.Column="1">
+                                <TextBlock Text="{Binding _PageTable[5]}"/>
+                            </Border>
+                            <Border Grid.Row="7" Grid.Column="1">
+                                <TextBlock Text="{Binding _PageTable[6]}"/>
+                            </Border>
+                            <Border Grid.Row="8" Grid.Column="1">
+                                <TextBlock Text="{Binding _PageTable[7]}"/>
+                            </Border>
+                        </Grid>
+                    </ItemsControl>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Grid.Row="0">
+                <StackPanel Grid.Column="1" Grid.Row="0" Width="100">
                     <Label Content="TLB"/>
-                    <DataGrid>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Page"/>
-                            <DataGridTextColumn Header="Frame"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <ItemsControl Name="TLBItemControl">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Row="0" Content="Page"/>
+                            <Border Grid.Row="1">
+                                <TextBlock Text="{Binding TLB[0]}"/>
+                            </Border>
+                            <Border Grid.Row="2">
+                                <TextBlock Text="{Binding TLB[2]}"/>
+                            </Border>
+                            
+                            <Label Grid.Row="0" Grid.Column="1" Content="Frame"/>
+                            <Border Grid.Row="1" Grid.Column="1">
+                                <TextBlock Text="{Binding TLB[1]}"/>
+                            </Border>
+                            <Border Grid.Row="2" Grid.Column="1">
+                                <TextBlock Text="{Binding TLB[3]}"/>
+                            </Border>
+                        </Grid>
+                    </ItemsControl>
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" Grid.Row="0">
+                <StackPanel Grid.Column="2" Grid.Row="0" Width="300">
                     <Label Content="Physical Memory"/>
-                    <DataGrid>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Frame"/>
-                            <DataGridTextColumn Header="00"/>
-                            <DataGridTextColumn Header="01"/>
-                            <DataGridTextColumn Header="02"/>
-                            <DataGridTextColumn Header="03"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    
+                    <ItemsControl>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Row="0" Content="Frame" FontWeight="Bold"/>
+                            <Border Grid.Row="1">
+                                <TextBlock Text="0" FontWeight="Bold"/>
+                            </Border>
+                            <Border Grid.Row="2">
+                                <TextBlock Text="1" FontWeight="Bold"/>
+                            </Border>
+                            <Border Grid.Row="3">
+                                <TextBlock Text="2" FontWeight="Bold"/>
+                            </Border>
+                            <Border Grid.Row="4">
+                                <TextBlock Text="3" FontWeight="Bold"/>
+                            </Border>
+                            <Border Grid.Row="5">
+                                <TextBlock Text="4"  FontWeight="Bold"/>
+                            </Border>
+                            <Border Grid.Row="6">
+                                <TextBlock Text="5"  FontWeight="Bold"/>
+                            </Border>
+                            <Border Grid.Row="7">
+                                <TextBlock Text="6"  FontWeight="Bold"/>
+                            </Border>
+                            <Border Grid.Row="8">
+                                <TextBlock Text="7"  FontWeight="Bold"/>
+                            </Border>
+
+                            <Label Grid.Row="0" Grid.Column="1" Content="00"/>
+                            <Label Grid.Row="0" Grid.Column="2" Content="01"/>
+                            <Label Grid.Row="0" Grid.Column="3" Content="02"/>
+                            <Label Grid.Row="0" Grid.Column="4" Content="03"/>
+                            <!--HARDCODED TABLES FTW-->
+                            <Border Grid.Row="1" Grid.Column="1">
+                                <TextBlock Text="0"/>
+                            </Border>
+                            <Border Grid.Row="1" Grid.Column="2">
+                                <TextBlock Text="1"/>
+                            </Border>
+                            <Border Grid.Row="1" Grid.Column="3">
+                                <TextBlock Text="2"/>
+                            </Border>
+                            <Border Grid.Row="1" Grid.Column="4">
+                                <TextBlock Text="3"/>
+                            </Border>
+                            <Border Grid.Row="2" Grid.Column="1">
+                                <TextBlock Text="4"/>
+                            </Border>
+                            <Border Grid.Row="2" Grid.Column="2">
+                                <TextBlock Text="5"/>
+                            </Border>
+                            <Border Grid.Row="2" Grid.Column="3">
+                                <TextBlock Text="6"/>
+                            </Border>
+                            <Border Grid.Row="2" Grid.Column="4">
+                                <TextBlock Text="7"/>
+                            </Border>
+                            <Border Grid.Row="3" Grid.Column="1">
+                                <TextBlock Text="8"/>
+                            </Border>
+                            <Border Grid.Row="3" Grid.Column="2">
+                                <TextBlock Text="9"/>
+                            </Border>
+                            <Border Grid.Row="3" Grid.Column="3">
+                                <TextBlock Text="10"/>
+                            </Border>
+                            <Border Grid.Row="3" Grid.Column="4">
+                                <TextBlock Text="11"/>
+                            </Border>
+                            <Border Grid.Row="4" Grid.Column="1">
+                                <TextBlock Text="12"/>
+                            </Border>
+                            <Border Grid.Row="4" Grid.Column="2">
+                                <TextBlock Text="13"/>
+                            </Border>
+                            <Border Grid.Row="4" Grid.Column="3">
+                                <TextBlock Text="14"/>
+                            </Border>
+                            <Border Grid.Row="4" Grid.Column="4">
+                                <TextBlock Text="15"/>
+                            </Border>
+                            <Border Grid.Row="5" Grid.Column="1">
+                                <TextBlock Text="16"/>
+                            </Border>
+                            <Border Grid.Row="5" Grid.Column="2">
+                                <TextBlock Text="17"/>
+                            </Border>
+                            <Border Grid.Row="5" Grid.Column="3">
+                                <TextBlock Text="18"/>
+                            </Border>
+                            <Border Grid.Row="5" Grid.Column="4">
+                                <TextBlock Text="19"/>
+                            </Border>
+                            <Border Grid.Row="6" Grid.Column="1">
+                                <TextBlock Text="20"/>
+                            </Border>
+                            <Border Grid.Row="6" Grid.Column="2">
+                                <TextBlock Text="21"/>
+                            </Border>
+                            <Border Grid.Row="6" Grid.Column="3">
+                                <TextBlock Text="22"/>
+                            </Border>
+                            <Border Grid.Row="6" Grid.Column="4">
+                                <TextBlock Text="23"/>
+                            </Border>
+                            <Border Grid.Row="7" Grid.Column="1">
+                                <TextBlock Text="24"/>
+                            </Border>
+                            <Border Grid.Row="7" Grid.Column="2">
+                                <TextBlock Text="25"/>
+                            </Border>
+                            <Border Grid.Row="7" Grid.Column="3">
+                                <TextBlock Text="26"/>
+                            </Border>
+                            <Border Grid.Row="7" Grid.Column="4">
+                                <TextBlock Text="27"/>
+                            </Border>
+                            <Border Grid.Row="8" Grid.Column="1">
+                                <TextBlock Text="28"/>
+                            </Border>
+                            <Border Grid.Row="8" Grid.Column="2">
+                                <TextBlock Text="29"/>
+                            </Border>
+                            <Border Grid.Row="8" Grid.Column="3">
+                                <TextBlock Text="30"/>
+                            </Border>
+                            <Border Grid.Row="8" Grid.Column="4">
+                                <TextBlock Text="31"/>
+                            </Border>
+                        </Grid>
+                    </ItemsControl>
                 </StackPanel>
                 
                 <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal">
                     <Label Content="Get Value: 0x"/>
-                    <TextBox Width="30"/>
-                    <TextBox Width="30"/>
+                    <TextBox Width="30" Name="PageTextbox"/>
+                    <TextBox Width="30" Name="FrameTextbox"/>
                     <Label Content="Virtual Address 0x"/>
-                    <Button Content="Go" Width="50"/>
+                    <Button Content="Go" Width="50" Name="GoButton" Click="GoButton_Click_1"/>
                     <Label Content="Value = "/>
-                    <Label/>
+                    <Label Name="retVal"/>
                 </StackPanel>
             </Grid>
             
