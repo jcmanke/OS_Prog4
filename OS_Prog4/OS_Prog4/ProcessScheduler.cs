@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace OS_Prog4
 {
@@ -51,9 +52,10 @@ namespace OS_Prog4
         //
         //Returns:  (nothing)
         //*******************************************************************//
-        public ProcessScheduler(uint quantum)
+        public ProcessScheduler(uint quantum, MainWindow listener)
         {
             Quantum = quantum;
+            _listener = listener;
 
             SJFSchedule = new ObservableCollection<Process>();
             PrioritySchedule = new ObservableCollection<Process>();
@@ -164,7 +166,7 @@ namespace OS_Prog4
         }
 
         //*******************************************************************//
-        //Author: Josh Schultz
+        //Author: Josh Schultz, Joe Manke
         //
         //Date: April 14, 2014
         //
@@ -217,11 +219,25 @@ namespace OS_Prog4
                 //Assuming the entire list can not start, increment the current time
                 _currentTime++;
             }
+
+            //draw gantt chart in MainWindow
+            long totalDuration = SJFSchedule.Sum(o => o.Duration);
+
+            foreach (Process process in SJFSchedule)
+            {
+                Label l = new Label();
+                l.Content = process.PId;
+                l.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
+                l.Width =  (double) process.Duration / totalDuration * _listener.SJFPanel.Width;
+                l.BorderThickness = new System.Windows.Thickness(1);
+                l.BorderBrush = System.Windows.Media.Brushes.Black;
+                _listener.SJFPanel.Children.Add(l);
+            }
         }
 
 
         //*******************************************************************//
-        //Author: Josh Schultz
+        //Author: Josh Schultz, Joe Manke
         //
         //Date: April 14, 2014
         //
@@ -274,10 +290,24 @@ namespace OS_Prog4
                 //If no items were able to execute, increment the time
                 _currentTime++;
             }
+
+            //draw gantt chart in MainWindow
+            long totalDuration = PrioritySchedule.Sum(o => o.Duration);
+
+            foreach (Process process in PrioritySchedule)
+            {
+                Label l = new Label();
+                l.Content = process.PId;
+                l.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
+                l.Width = (double)process.Duration / totalDuration * _listener.PriorityPanel.Width;
+                l.BorderThickness = new System.Windows.Thickness(1);
+                l.BorderBrush = System.Windows.Media.Brushes.Black;
+                _listener.PriorityPanel.Children.Add(l);
+            }
         }
 
         //*******************************************************************//
-        //Author: Josh Schultz
+        //Author: Josh Schultz, Joe Manke
         //
         //Date: April 14, 2014
         //
@@ -383,6 +413,19 @@ namespace OS_Prog4
 
                 prevDuration = currentDuration;
             }
+
+            //draw gantt chart in MainWindow
+
+            foreach (Process process in RoundRobinSchedule)
+            {
+                Label l = new Label();
+                l.Content = process.PId;
+                l.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
+                l.Width = (double)process.Duration / totalDuration * _listener.RRPanel.Width;
+                l.BorderThickness = new System.Windows.Thickness(1);
+                l.BorderBrush = System.Windows.Media.Brushes.Black;
+                _listener.RRPanel.Children.Add(l);
+            }
         }
 
 
@@ -418,5 +461,8 @@ namespace OS_Prog4
 
         //Used when scheduling the SJF, Priority, and RR
         private uint _currentTime;
+
+        //used for programmatically drawing gantt charts
+        private MainWindow _listener;
     }
 }

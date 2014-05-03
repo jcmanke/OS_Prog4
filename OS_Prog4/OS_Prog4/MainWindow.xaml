@@ -12,14 +12,14 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="0">
-                    <Label Content="First kind"/>
-                    <Rectangle VerticalAlignment="Center" Fill="Beige" Stroke="Black" Height="30" Margin="0,0,0,25"/>
+                    <Label Content="Shortest Job First"/>
+                    <StackPanel Name="SJFPanel" Orientation="Horizontal" Height="30" Width="700" Margin="0,0,0,25"/>
                     
-                    <Label Content="second kind"/>
-                    <Rectangle VerticalAlignment="Center" Fill="AliceBlue" Stroke="Black" Height="30"  Margin="0,0,0,25"/>
+                    <Label Content="Priority"/>
+                    <StackPanel Name="PriorityPanel" Orientation="Horizontal" Height="30" Width="700" Margin="0,0,0,25"/>
 
-                    <Label Content="third kind"/>
-                    <Rectangle VerticalAlignment="Center" Fill="BlueViolet" Stroke="Black" Height="30" Margin="0,0,0,25"/>
+                    <Label Content="Round Robin"/>
+                    <StackPanel Name="RRPanel" Orientation="Horizontal" Height="30" Width="700" Margin="0,0,0,25"/>
                 </StackPanel>
                 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="40" Margin="0,0,0,25">

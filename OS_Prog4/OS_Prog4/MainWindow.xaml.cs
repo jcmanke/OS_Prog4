@@ -29,11 +29,10 @@ namespace OS_Prog4
             //DataContext = this;
            
             //Quantum default value of 2
-            _scheduler = new ProcessScheduler(2);
+            _scheduler = new ProcessScheduler(2, this);
 
             //Set the datacontext to this single scheduler
             DataContext = _scheduler;
-
         }
 
 
@@ -60,7 +59,7 @@ namespace OS_Prog4
 
 
         //*******************************************************************//
-        //Author: Josh Schultz/Joe Manke
+        //Author: Josh Schultz, Joe Manke
         //
         //Date: May 1, 2014
         //
@@ -80,7 +79,7 @@ namespace OS_Prog4
 
 
         //*******************************************************************//
-        //Author: Josh Schultz/Joe Manke
+        //Author: Josh Schultz, Joe Manke
         //
         //Date: May 1, 2014
         //
@@ -96,6 +95,10 @@ namespace OS_Prog4
         {
             //Clear all of the processes
             _scheduler.ClearProcesses();
+
+            SJFPanel.Children.Clear();
+            PriorityPanel.Children.Clear();
+            RRPanel.Children.Clear();
         }
     }
 }
