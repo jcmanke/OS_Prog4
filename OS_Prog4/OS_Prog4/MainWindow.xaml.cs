@@ -23,25 +23,39 @@ namespace OS_Prog4
     {
         private ProcessScheduler _scheduler;
 
+        //*******************************************************************//
+        //Author: Joe Manke, Josh Schultz
+        //
+        //Date: March 31, 2014
+        //
+        //Description: Constructor for the MainWindow
+        //
+        //Parameters: (none)
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
         public MainWindow()
         {
             InitializeComponent();
-            //DataContext = this;
            
             //Quantum default value of 2
             _scheduler = new ProcessScheduler(2, this);
-
-            //Set the datacontext to this single scheduler
-            DataContext = _scheduler;
         }
 
 
         //*******************************************************************//
-        //Author: 
-        //Date: 
-        //Description:
-        //Parameters:
-        //Returns:
+        //Author: Joe Manke
+        //
+        //Date: May 3, 2014
+        //
+        //Description: Opens a dialog to add a new process. If the input is
+        //             accepted, it is added to the scheduler and the table
+        //             and gantt charts are updated.
+        //
+        //Parameters:  sender - The GUI button object
+        //                  e - The event object
+        //
+        //Returns:  (nothing)
         //*******************************************************************//
         private void AddProcessButton_Click_1(object sender, RoutedEventArgs e)
         {
@@ -115,6 +129,33 @@ namespace OS_Prog4
             SJFPanel.Children.Clear();
             PriorityPanel.Children.Clear();
             RRPanel.Children.Clear();
+        }
+
+        //*******************************************************************//
+        //Author: Joe Manke
+        //
+        //Date: May 3, 2014
+        //
+        //Description: Changes the data context to match which tab is selected.
+        //
+        //Parameters:  sender - The GUI element that triggered the event
+        //                  e - The event object
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
+        private void TabControl_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+            if (ProcessTab.IsSelected)
+            {
+                DataContext = _scheduler;
+            }
+            else if (MemoryTab.IsSelected)
+            {
+            }
+            else if (PageTab.IsSelected)
+            {
+
+            }
         }
     }
 }
