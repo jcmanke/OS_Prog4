@@ -37,12 +37,12 @@ namespace OS_Prog4
             
         }
 
-        public void SecondChance()
+        public ObservableCollection<ObservableCollection<string>> SecondChance()
         {
             //Skip the ordering if there are no references
             if(ReferenceString.Count <= 0)
             {
-                return;
+                return new ObservableCollection<ObservableCollection<string>>();
             }
 
             ObservableCollection<ObservableCollection<string>> frames = new ObservableCollection<ObservableCollection<string>>();
@@ -219,6 +219,8 @@ namespace OS_Prog4
                     }
                 }
             }
+
+            return frames;
         }
          
         public ObservableCollection<int> ReferenceString { get; set; }
