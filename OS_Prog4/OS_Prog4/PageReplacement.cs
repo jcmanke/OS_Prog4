@@ -7,8 +7,40 @@ using System.Threading.Tasks;
 
 namespace OS_Prog4
 {
+
+    /**************************************************************************
+     * Author: Josh Schultz, Adam Meaney
+     * 
+     * Date: May 2, 2014
+     * 
+     * Class:          PageReplacement
+     * Inherits From:  (nothing)
+     * Imeplements:    (nothing)
+     * 
+     * Description:  This class is used to handle page replacement in physical
+     *               memory.  It simulates a FIFO, LRU, LFU, Optimal, Second
+     *               Chance, and Clock algorithm.  Since Second Chance and the Clock
+     *               algorithm are so similar, both methods use the exact same code.
+     *               
+     * Constructor: public PageReplacement()
+     * 
+     * Methods: public void GenerateReferenceString()
+     *          public ObservableCollection<ObservableCollection<string>> SecondChance()
+     *          
+    **************************************************************************/
     public class PageReplacement
     {
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: May 2, 2014
+        //
+        //Description:  The constructor simply initializes the public properties
+        //
+        //Parameters:   (nothing)
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
         public PageReplacement()
         {
             //Set defaults
@@ -17,6 +49,20 @@ namespace OS_Prog4
             ReferenceString = new ObservableCollection<int>();
         }
 
+
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: May 2, 2014
+        //
+        //Description:  The reference string for the pages are randomly generated.
+        //              The public properties are used to determine the max page
+        //              number, and the number of entries in the reference string.
+        //
+        //Parameters:   (nothing)
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
         public void GenerateReferenceString()
         {
             //Clear the existing reference string
@@ -37,6 +83,21 @@ namespace OS_Prog4
             
         }
 
+
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: May 2, 2014
+        //
+        //Description:  This method uses the public property, ReferenceString
+        //              to simulate the contents of three frames at each iteration.
+        //              The simulation is based on a SecondChance page replacement,
+        //              but works the exact same way as a Clock algorithm.
+        //
+        //Parameters:   (nothing)
+        //
+        //Returns:  frames - The result of the algorithm using three frames
+        //*******************************************************************//
         public ObservableCollection<ObservableCollection<string>> SecondChance()
         {
             //Skip the ordering if there are no references
@@ -45,18 +106,20 @@ namespace OS_Prog4
                 return new ObservableCollection<ObservableCollection<string>>();
             }
 
+            //Array to store each frame iteration
             ObservableCollection<ObservableCollection<string>> frames = new ObservableCollection<ObservableCollection<string>>();
 
             //List to determine if the page number has already executed
             List<bool> referenceBits = new List<bool>(MaxPageValue);
             
-
             //Default the pages to false
-            for (int i = 0; i < MaxPageValue; i++)
+            for (int i = 0; i < MaxPageValue+1; i++)
                 referenceBits.Add(false);
 
+            //The current contents of the frame
             List<int> frameContents = new List<int>(3);
 
+            //Initialize the contents to an invalid number
             for (int i = 0; i < 3; i++)
             {
                 frameContents.Add(-1);
@@ -71,6 +134,7 @@ namespace OS_Prog4
                 frames.Add(row);
             }
 
+            //Total number of faults
             int faults = 1;
 
             //Insert the first element
@@ -78,11 +142,12 @@ namespace OS_Prog4
             frames[3][0] = "F";
             frameContents[0] = ReferenceString[0];
 
+            //Index of next value to replace in the frame
             int nextOut = 2;
 
             for (int i = 1; i < Length; i++)
             {
-                //If the current page exists in the existing table
+                //If the current page exists in the existing frame table
                 if (ReferenceString[i] == frameContents[0])
                 {
                     //String representation of zero or one
@@ -91,6 +156,7 @@ namespace OS_Prog4
                     //Alternate the reference bit
                     referenceBits[ReferenceString[i]] = !referenceBits[ReferenceString[i]];
 
+                    //Get the string literal of the reference bit
                     if (referenceBits[ReferenceString[i]])
                         bitValue = "1";
                     else
@@ -109,6 +175,7 @@ namespace OS_Prog4
                     //Alternate the reference bit
                     referenceBits[ReferenceString[i]] = !referenceBits[ReferenceString[i]];
 
+                    //Get the string literal of the reference bit
                     if (referenceBits[ReferenceString[i]])
                         bitValue = "1";
                     else
@@ -127,6 +194,7 @@ namespace OS_Prog4
                     //Alternate the reference bit
                     referenceBits[ReferenceString[i]] = !referenceBits[ReferenceString[i]];
 
+                    //Get the string literal of the reference bit
                     if (referenceBits[ReferenceString[i]])
                         bitValue = "1";
                     else
@@ -141,11 +209,14 @@ namespace OS_Prog4
                 {
                     //The item wasn't found in the frames
 
+                    //Since it wasn't found, generate a fault
                     frames[3][i] = "F";
                     faults++;
 
+                    //Determine if there is an open frame
                     if (frameContents[1] == -1)
                     {
+                        //Insert into the open frame
                         frames[2][i] = "";
                         frames[1][i] = frames[0][i-1];
                         frames[0][i] = ReferenceString[i].ToString() + "(0)";
@@ -157,6 +228,7 @@ namespace OS_Prog4
                     }
                     else if (frameContents[2] == -1)
                     {
+                        //Insert into the open frame
                         frames[2][i] = frames[1][i-1];
                         frames[1][i] = frames[0][i-1];
                         frames[0][i] = ReferenceString[i].ToString() + "(0)";
@@ -176,39 +248,39 @@ namespace OS_Prog4
                         frameContents[nextOut] = ReferenceString[i];
 
                         frames[nextOut][i] = ReferenceString[i].ToString() + "(0)";
-                        frames[Math.Abs(nextOut + 2) % 3][i] = frames[Math.Abs(nextOut + 2) % 3][i - 1];
-                        frames[Math.Abs(nextOut + 1) % 3][i] = frames[Math.Abs(nextOut + 1) % 3][i - 1];
+                        frames[(nextOut + 2) % 3][i] = frames[(nextOut + 2) % 3][i - 1];
+                        frames[(nextOut + 1) % 3][i] = frames[(nextOut + 1) % 3][i - 1];
 
                         //The next item is 1 less than the current index
                         //2->1 , 1->0, 0->2
-                        nextOut = Math.Abs(nextOut + 2) % 3;               
+                        nextOut = (nextOut + 2) % 3;               
                     }
-                    else if (!referenceBits[frameContents[Math.Abs(nextOut + 2) % 3]])
+                    else if (!referenceBits[frameContents[(nextOut + 2) % 3]])
                     {
                         
                         referenceBits[frameContents[nextOut]] = false;
-                        frameContents[Math.Abs(nextOut + 2) % 3] = ReferenceString[i];
+                        frameContents[(nextOut + 2) % 3] = ReferenceString[i];
 
                         //Update the previous value from (1) to (0)
                         frames[nextOut][i] = frameContents[nextOut].ToString() + "(0)";
 
-                        frames[Math.Abs(nextOut + 2) % 3][i] = ReferenceString[i].ToString() + "(0)";
-                        frames[Math.Abs(nextOut + 1) % 3][i] = frames[Math.Abs(nextOut + 1) % 3][i - 1];
+                        frames[(nextOut + 2) % 3][i] = ReferenceString[i].ToString() + "(0)";
+                        frames[(nextOut + 1) % 3][i] = frames[(nextOut + 1) % 3][i - 1];
 
-                        nextOut = Math.Abs(nextOut + 1) % 3;
+                        nextOut = (nextOut + 1) % 3;
                     }
-                    else if (!referenceBits[frameContents[Math.Abs(nextOut + 1) % 3]])
+                    else if (!referenceBits[frameContents[(nextOut + 1) % 3]])
                     {
                         //Update the previous two values from (1) to (0)
                         referenceBits[frameContents[nextOut]] = false;
-                        referenceBits[frameContents[Math.Abs(nextOut + 2)%3]] = false;
+                        referenceBits[frameContents[(nextOut + 2)%3]] = false;
 
                         //New value inserted into frameContent
-                        frameContents[Math.Abs(nextOut + 1) % 3] = ReferenceString[i];
+                        frameContents[(nextOut + 1) % 3] = ReferenceString[i];
 
                         frames[nextOut][i] = frameContents[nextOut].ToString() + "(0)";
-                        frames[Math.Abs(nextOut + 2) % 3][i] = frameContents[Math.Abs(nextOut + 2)%3].ToString() + "(0)";
-                        frames[Math.Abs(nextOut + 1) % 3][i] = ReferenceString[i].ToString() + "(0)";
+                        frames[(nextOut + 2) % 3][i] = frameContents[(nextOut + 2)%3].ToString() + "(0)";
+                        frames[(nextOut + 1) % 3][i] = ReferenceString[i].ToString() + "(0)";
                     }
                     else
                     {
@@ -218,10 +290,10 @@ namespace OS_Prog4
                         referenceBits[frameContents[nextOut]] = false;
 
                         frames[nextOut][i] = ReferenceString[i].ToString() + "(0)";
-                        frames[Math.Abs(nextOut + 2) % 3][i] = frames[Math.Abs(nextOut + 2) % 3][i - 1];
-                        frames[Math.Abs(nextOut + 1) % 3][i] = frames[Math.Abs(nextOut + 1) % 3][i - 1];
+                        frames[(nextOut + 2) % 3][i] = frames[(nextOut + 2) % 3][i - 1];
+                        frames[(nextOut + 1) % 3][i] = frames[(nextOut + 1) % 3][i - 1];
 
-                        nextOut = Math.Abs(nextOut + 2) % 3; 
+                        nextOut = (nextOut + 2) % 3; 
                     }
                 }
             }
@@ -230,6 +302,7 @@ namespace OS_Prog4
             return frames;  //4 rows, top 3 contains numbers, last row contains F's
         }
          
+
         public ObservableCollection<int> ReferenceString { get; set; }
         public int Length { get; set; }
         public int MaxPageValue { get; set; }
