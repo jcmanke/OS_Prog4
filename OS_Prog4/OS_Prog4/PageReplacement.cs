@@ -63,7 +63,7 @@ namespace OS_Prog4
             }
 
             //Initialize the frames with 3 frames
-            for (int frameCount = 3; frameCount > 0; frameCount--)
+            for (int frameCount = 4; frameCount > 0; frameCount--)
             {
                 ObservableCollection<string> row = new ObservableCollection<string>();
                 for (int i = 0; i < ReferenceString.Count; i++)
@@ -71,8 +71,11 @@ namespace OS_Prog4
                 frames.Add(row);
             }
 
+            int faults = 1;
+
             //Insert the first element
             frames[0][0] = ReferenceString[0].ToString() + "(0)";
+            frames[3][0] = "F";
             frameContents[0] = ReferenceString[0];
 
             int nextOut = 2;
@@ -137,6 +140,9 @@ namespace OS_Prog4
                 else
                 {
                     //The item wasn't found in the frames
+
+                    frames[3][i] = "F";
+                    faults++;
 
                     if (frameContents[1] == -1)
                     {
@@ -220,7 +226,8 @@ namespace OS_Prog4
                 }
             }
 
-            return frames;
+            //return faults;  //Number of faults
+            return frames;  //4 rows, top 3 contains numbers, last row contains F's
         }
          
         public ObservableCollection<int> ReferenceString { get; set; }
