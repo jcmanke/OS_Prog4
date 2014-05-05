@@ -2,8 +2,19 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="OS Program 4" Height="600" Width="1200">
-    
-    <TabControl SelectionChanged="TabControl_SelectionChanged_1">
+
+    <Window.Resources>
+        <Style TargetType="{x:Type Border}" x:Name="BorderStyle">
+            <!-- All rows -->
+            <Setter Property="BorderBrush" Value="Black" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style TargetType="{x:Type TextBlock}" x:Name="TextBlockStyle">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
+        <TabControl SelectionChanged="TabControl_SelectionChanged_1">
         <TabItem Header="Process Scheduler" Name="ProcessTab">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -50,25 +61,15 @@
         
         <TabItem Header="Memory Management" Name="MemoryTab">
             <Grid>
-                <Grid.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <!-- All rows -->
-                        <Setter Property="BorderBrush" Value="Black" />
-                        <Setter Property="BorderThickness" Value="1" />
-                    </Style>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="HorizontalAlignment" Value="Center"/>
-                    </Style>
-                </Grid.Resources>
-
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
                 
                 <StackPanel Grid.Column="0" Grid.Row="0" Width="150">
@@ -337,14 +338,15 @@
                     </ItemsControl>
                 </StackPanel>
                 
-                <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal">
-                    <Label Content="Get Value: 0x"/>
-                    <TextBox Width="30" Name="PageTextbox"/>
-                    <TextBox Width="30" Name="FrameTextbox"/>
-                    <Label Content="Virtual Address 0x"/>
-                    <Button Content="Go" Width="50" Name="GoButton" Click="GoButton_Click_1"/>
-                    <Label Content="Value = "/>
-                    <Label Name="retVal"/>
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label Content="Get Value at 0x"/>
+                    <TextBox Width="30" Height="20" Name="PageTextbox"/>
+                    <TextBox Width="30" Height="20" Name="FrameTextbox"/>
+                    <Button Content="Go" Width="50" Name="GoButton" Click="GoButton_Click_1" Margin="20,0,20,0"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2"  Grid.ColumnSpan="3" HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Label Name="valueReturned"/>
+                    <Label Name="valueFoundWhere"/>
                 </StackPanel>
             </Grid>
             
@@ -359,7 +361,7 @@
                     <RowDefinition Height="50"/>
                 </Grid.RowDefinitions>
                 <Label Content="Algorithm" Grid.Row="0" HorizontalAlignment="Center"/>
-                <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Name="RadioGroup">
                     <RadioButton Content="FIFO" GroupName="ReplAlg" Margin="5,0,5,0" IsChecked="True" Checked="RadioButton_Checked_1"/>
                     <RadioButton Content="LRU" GroupName="ReplAlg" Margin="5,0,5,0" Checked="RadioButton_Checked_1"/>
                     <RadioButton Content="LFU" GroupName="ReplAlg" Margin="5,0,5,0" Checked="RadioButton_Checked_1"/>
@@ -368,20 +370,28 @@
                     <RadioButton Content="Clock" GroupName="ReplAlg" Margin="5,0,5,0" Checked="RadioButton_Checked_1"/>
                 </StackPanel>
                 <StackPanel Grid.Row="2">
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Reference String: "/>
-                        <Label Name="ReferenceStringLabel"/>
-                    </StackPanel>
-                    <DataGrid Name="PageStack">
-                        
-                    </DataGrid>
+                    <Grid Name="PageStack" Height="150" Width="800">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" Name="LabelsColumn"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Reference String" Grid.Row="0" Grid.Column="0"/>
+                        <Label Content="Frames" Grid.Row="1" Grid.RowSpan="3" Grid.Column="0" Name="FramesLabel"/>
+                        <Label Content="Faults" Grid.Row="4" Grid.Column="0" Name="FaultsLabel"/>
+                    </Grid>
                 </StackPanel>
-                <StackPanel Grid.Row="3" Orientation="Horizontal" Height="30">
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Height="30" HorizontalAlignment="Center">
                     <Label Content="Number of Pages: "/>
                     <TextBox Name="NumPages" Width="50"/>
                     <Label Content="Reference String Length: "/>
                     <TextBox Name="RefStringLength" Width="50"/>
-                    <Button Name="GenerateRefStringButton" Content="Generate String" Click="GenerateRefStringButton_Click_1"/>
+                    <Button Name="GenerateRefStringButton" Content="Generate String" Click="GenerateRefStringButton_Click_1" Margin="20,0,10,0"/>
                 </StackPanel>
             </Grid>
         </TabItem>

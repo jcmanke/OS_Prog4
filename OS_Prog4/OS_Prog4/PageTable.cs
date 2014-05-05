@@ -24,7 +24,7 @@ namespace OS_Prog4
         };
 
         int nextFrame = 0;
-        bool showString = false;
+        public bool foundInTLB = false;
 
         private ObservableCollection<int> buffer;
         public ObservableCollection<int> TLB
@@ -75,7 +75,7 @@ namespace OS_Prog4
                 nextFrame++;
             }
 
-            showString = checkTLB(page);
+            foundInTLB = checkTLB(page);
             updateTLB(page);
 
             // The value to be put in the values position in the picture.

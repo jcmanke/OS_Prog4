@@ -24,6 +24,7 @@ namespace OS_Prog4
         private ProcessScheduler _scheduler;
         private PageTable _pageTable;
         private PageReplacement _pageReplacement;
+        ObservableCollection<ObservableCollection<string>> _currentAlgorithm;
 
         //*******************************************************************//
         //Author: Joe Manke, Josh Schultz
@@ -38,14 +39,16 @@ namespace OS_Prog4
         //*******************************************************************//
         public MainWindow()
         {
-            InitializeComponent();
-           
             //Quantum default value of 2
             _scheduler = new ProcessScheduler(2, this);
 
             _pageTable = new PageTable();
 
             _pageReplacement = new PageReplacement();
+
+            _currentAlgorithm = new ObservableCollection<ObservableCollection<string>>();
+
+            InitializeComponent();
         }
 
 
@@ -173,7 +176,15 @@ namespace OS_Prog4
             {
                 if (Int32.TryParse(PageTextbox.Text, out page) && Int32.TryParse(FrameTextbox.Text, out offset))
                 {
-                    retVal.Content = _pageTable.goPushed(page, offset);
+                    valueReturned.Content = "Value " + _pageTable.goPushed(page, offset);
+                    if (_pageTable.foundInTLB)
+                    {
+                        valueFoundWhere.Content = " was found in TLB";
+                    }
+                    else
+                    {
+                        valueFoundWhere.Content = " was found in Page Table";
+                    }
                 }
                 else
                 {
@@ -190,21 +201,70 @@ namespace OS_Prog4
         {
             RadioButton button = sender as RadioButton;
 
+            //switch to current algorithm
             switch (button.Content.ToString())
             {
                 case "FIFO":
+                    _currentAlgorithm = _pageReplacement.FirstInFirstOut();
                     break;
                 case "LRU":
+                    _currentAlgorithm = _pageReplacement.LeastRecentlyUsed();
                     break;
                 case "LFU":
+                    _currentAlgorithm = _pageReplacement.LeastFrequentlyUsed();
                     break;
                 case "Optimal":
+                    _currentAlgorithm = _pageReplacement.Optimal();
                     break;
                 case "Second Chance":
-                    PageStack.ItemsSource = _pageReplacement.SecondChance();
+                    _currentAlgorithm = _pageReplacement.SecondChance();
                     break;
                 case "Clock":
                     break;
+            }
+
+            DrawPageStack();
+        }
+
+        private void DrawPageStack()
+        {
+            if (PageStack != null)
+            {
+                PageStack.Children.OfType<Border>().ToList().ForEach(o => PageStack.Children.Remove(o));
+                PageStack.Children.OfType<TextBlock>().ToList().ForEach(o => PageStack.Children.Remove(o));
+
+                for (int i = 0; i < _pageReplacement.ReferenceString.Count; i++)
+                {
+                    ColumnDefinition colDef = new ColumnDefinition();
+                    colDef.Width = new GridLength((PageStack.Width - LabelsColumn.Width.Value) / _pageReplacement.ReferenceString.Count);
+                    PageStack.ColumnDefinitions.Add(colDef);
+
+                    TextBlock tb = new TextBlock();
+                    tb.Text = _pageReplacement.ReferenceString[i].ToString();
+                    tb.SetValue(Grid.RowProperty, 0);
+                    tb.SetValue(Grid.ColumnProperty, i + 1);
+                    PageStack.Children.Add(tb);
+                }
+
+                for (int i = 0; i < _currentAlgorithm.Count; i++)
+                {
+                    ObservableCollection<string> row = _currentAlgorithm[i];
+                    for (int j = 0; j < row.Count; j++)
+                    {
+                        string frame = row[j];
+
+                        TextBlock tb = new TextBlock();
+                        tb.Text = frame;
+
+                        Border border = new Border();
+                        border.Child = tb;
+
+                        border.SetValue(Grid.RowProperty, i + 1);
+                        border.SetValue(Grid.ColumnProperty, j + 1);
+
+                        PageStack.Children.Add(border);
+                    }
+                }
             }
         }
 
@@ -218,14 +278,6 @@ namespace OS_Prog4
                     _pageReplacement.Length = length;
                     _pageReplacement.MaxPageValue = pageCount;
                     _pageReplacement.GenerateReferenceString();
-
-                    //show reference string in GUI
-                    StringBuilder temp = new StringBuilder();
-                    foreach (int i in _pageReplacement.ReferenceString)
-                    {
-                        temp.Append(i).Append(' ');
-                    }
-                    ReferenceStringLabel.Content = temp.ToString();
                 }
                 else
                 {
@@ -236,6 +288,10 @@ namespace OS_Prog4
             {
                 MessageBox.Show("Error parsing inputs. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            //forces GUI to update
+            var checkRadioButton = RadioGroup.Children.OfType<RadioButton>().First(o => (bool)o.IsChecked);
+            RadioButton_Checked_1(checkRadioButton, e);
         }
 
         private void SetQuantumButton_Click_1(object sender, RoutedEventArgs e)
