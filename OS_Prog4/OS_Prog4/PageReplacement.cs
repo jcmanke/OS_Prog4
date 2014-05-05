@@ -302,10 +302,21 @@ namespace OS_Prog4
             return frames;  //4 rows, top 3 contains numbers, last row contains F's
         }
 
-        public ObservableCollection<ObservableCollection<string>> fifo()
+        //*******************************************************************//
+        //Author: Adam Meaney, Josh Schultz
+        //
+        //Date: May 2, 2014
+        //
+        //Description:  This method uses the public property, ReferenceString
+        //              to simulate the contents of three frames at each iteration.
+        //              The simulation is based on a FIFO page replacement.
+        //
+        //Parameters:   (nothing)
+        //
+        //Returns:  frames - conents of frames through each iteration 
+        //*******************************************************************//
+        public ObservableCollection<ObservableCollection<string>> FirstInFirstOut()
         {
-            int next = 0;
-
             //Skip the ordering if there are no references
             if (ReferenceString.Count <= 0)
             {
@@ -315,54 +326,112 @@ namespace OS_Prog4
             //Array to store each frame iteration
             ObservableCollection<ObservableCollection<string>> frames = new ObservableCollection<ObservableCollection<string>>();
 
-            frames[0][0] = ReferenceString[0].ToString();
-            frames[1][0] = "-";
-            frames[2][0] = "-";
-            frames[3][0] = "F";
+            //The current contents of the frame
+            List<int> frameContents = new List<int>(3);
 
-            if (ReferenceString.Count > 1)
+            //Initialize the contents to an invalid number
+            for (int i = 0; i < 3; i++)
             {
-                frames[0][1] = frames[0][0];
-                frames[1][1] = ReferenceString[0].ToString();
-                frames[2][1] = "-";
-                frames[3][1] = "F";
+                frameContents.Add(-1);
+            }
 
-                if (ReferenceString.Count > 2)
+            //Initialize the frames with 3 frames
+            for (int frameCount = 4; frameCount > 0; frameCount--)
+            {
+                ObservableCollection<string> row = new ObservableCollection<string>();
+                for (int i = 0; i < ReferenceString.Count; i++)
+                    row.Add("");
+                frames.Add(row);
+            }
+
+            //Total number of faults
+            int faults = 1;
+
+            //Insert the first element
+            frames[0][0] = ReferenceString[0].ToString();
+            frames[3][0] = "F";
+            frameContents[0] = ReferenceString[0];
+
+            for (int i = 1; i < Length; i++)
+            {
+                //If the current page exists in the existing frame table
+                if (ReferenceString[i] == frameContents[0] ||
+                    ReferenceString[i] == frameContents[1] ||
+                    ReferenceString[i] == frameContents[2])
                 {
-                    frames[0][2] = frames[0][0];
-                    frames[1][2] = frames[1][1];
-                    frames[2][2] = ReferenceString[2].ToString();
-                    frames[3][2] = "F";
+                    frames[0][i] = frames[0][i - 1];
+                    frames[1][i] = frames[1][i - 1];
+                    frames[2][i] = frames[2][i - 1];
+                    continue;
+                }
+                else
+                {
+                    //The item wasn't found in the frames
 
-                    for (int index = 3; index < ReferenceString.Count; index++)
+                    //Since it wasn't found, generate a fault
+                    frames[3][i] = "F";
+                    faults++;
+
+                    //Determine if there is an open frame
+                    if (frameContents[1] == -1)
                     {
-                        frames[0][index] = frames[0][index - 1];
-                        frames[1][index] = frames[1][index - 1];
-                        frames[2][index] = frames[2][index - 1];
-                        frames[3][index] = "-";
+                        //Insert into the open frame
+                        frames[2][i] = "";
+                        frames[1][i] = frames[0][i - 1];
+                        frames[0][i] = ReferenceString[i].ToString();  //newest element
 
-                        if    (frames[0][index] != ReferenceString[index].ToString()
-                            && frames[1][index] != ReferenceString[index].ToString()
-                            && frames[2][index] != ReferenceString[index].ToString())
-                        {
-                            frames[3][index] = "F";
-                            frames[next][index] = ReferenceString[index].ToString();
-                            next = (next + 1 ) % 3;
-                        }
+                        //Push down the queue
+                        frameContents[1] = frameContents[0];
+                        frameContents[0] = ReferenceString[i];
+                        continue;
+                    }
+                    else if (frameContents[2] == -1)
+                    {
+                        //Insert into the open frame
+                        frames[2][i] = frames[1][i - 1];
+                        frames[1][i] = frames[0][i - 1];
+                        frames[0][i] = ReferenceString[i].ToString();
+
+                        //Push down the queue
+                        frameContents[2] = frameContents[1];
+                        frameContents[1] = frameContents[0];
+                        frameContents[0] = ReferenceString[i];
+                        continue;
                     }
 
+
+                    frameContents[2] = frameContents[1];
+                    frameContents[1] = frameContents[0];
+                    frameContents[0] = ReferenceString[i];
+
+                    //Update the frame table
+                    frames[0][i] = frameContents[0].ToString();
+                    frames[1][i] = frameContents[1].ToString();
+                    frames[2][i] = frameContents[2].ToString();
                 }
             }
 
-            return frames;
+            //return faults;  //Number of faults
+            return frames;  //4 rows, top 3 contains numbers, last row contains F's
         }
 
-        public ObservableCollection<ObservableCollection<string>> lfu()
-        {
-            int first = 3;
-            int second = 2;
-            int third = 1;
 
+
+        //*******************************************************************//
+        //Author: Adam Meaney, Josh Schultz
+        //
+        //Date: May 2, 2014
+        //
+        //Description:  This method uses the public property, ReferenceString
+        //              to simulate the contents of three frames at each iteration.
+        //              The simulation is based on a least used page replacement.
+        //
+        //Parameters:   (nothing)
+        //
+        //Returns:  frames - conents of frames through each iteration 
+        //*******************************************************************//
+        public ObservableCollection<ObservableCollection<string>> LeastRecentlyUsed()
+        {
             //Skip the ordering if there are no references
             if (ReferenceString.Count <= 0)
             {
@@ -372,65 +441,129 @@ namespace OS_Prog4
             //Array to store each frame iteration
             ObservableCollection<ObservableCollection<string>> frames = new ObservableCollection<ObservableCollection<string>>();
 
-            frames[0][0] = ReferenceString[0].ToString();
-            frames[1][0] = "-";
-            frames[2][0] = "-";
-            frames[3][0] = "F";
+            //The current contents of the frame
+            List<int> frameContents = new List<int>(3);
 
-            if (ReferenceString.Count > 1)
+            //Initialize the contents to an invalid number
+            for (int i = 0; i < 3; i++)
             {
-                frames[0][1] = frames[0][0];
-                frames[1][1] = ReferenceString[0].ToString();
-                frames[2][1] = "-";
-                frames[3][1] = "F";
+                frameContents.Add(-1);
+            }
 
-                if (ReferenceString.Count > 2)
+            //Initialize the frames with 3 frames
+            for (int frameCount = 4; frameCount > 0; frameCount--)
+            {
+                ObservableCollection<string> row = new ObservableCollection<string>();
+                for (int i = 0; i < ReferenceString.Count; i++)
+                    row.Add("");
+                frames.Add(row);
+            }
+
+            //Total number of faults
+            int faults = 1;
+
+            //Insert the first element
+            frames[0][0] = ReferenceString[0].ToString();
+            frames[3][0] = "F";
+            frameContents[0] = ReferenceString[0];
+
+            for (int i = 1; i < Length; i++)
+            {
+                //If the current page exists in the existing frame table
+                if (ReferenceString[i] == frameContents[0])
                 {
-                    frames[0][2] = frames[0][0];
-                    frames[1][2] = frames[1][1];
-                    frames[2][2] = ReferenceString[2].ToString();
-                    frames[3][2] = "F";
+                    // [0]  <Recently used>  <-- current value
+                    // [1]   ..
+                    // [2]  <Least used>
 
-                    for (int index = 3; index < ReferenceString.Count; index++)
+                    //No ordering is needed
+
+                    //Copy from the previous frame
+                    frames[0][i] = frames[0][i - 1];
+                    frames[1][i] = frames[1][i - 1];
+                    frames[2][i] = frames[2][i - 1];
+                }
+                else if (ReferenceString[i] == frameContents[1])
+                {
+                    // [0]  <Recently used>  
+                    // [1]   ..               <-- current value
+                    // [2]  <Least used>
+
+                    //Switch 0 and 1
+                    int temp = frameContents[0];
+                    frameContents[0] = frameContents[1];
+                    frameContents[1] = temp;
+
+                    //Output new order
+                    frames[0][i] = frameContents[0].ToString();
+                    frames[1][i] = frameContents[1].ToString();
+                    frames[2][i] = frames[2][i - 1];
+                }
+                else if (ReferenceString[i] == frameContents[2])
+                {
+                    // [0]  <Recently used>  
+                    // [1]   ..              
+                    // [2]  <Least used>      <-- current value
+
+                    //Rotate the three values
+                    int temp = frameContents[2];
+                    frameContents[2] = frameContents[1];
+                    frameContents[1] = frameContents[0];
+                    frameContents[0] = temp;
+
+                    //Output new order
+                    frames[0][i] = frameContents[0].ToString();
+                    frames[1][i] = frameContents[1].ToString();
+                    frames[2][i] = frameContents[2].ToString();
+                }
+                else
+                {
+                    //The item wasn't found in the frames
+
+                    //Since it wasn't found, generate a fault
+                    frames[3][i] = "F";
+                    faults++;
+
+                    //Determine if there is an open frame
+                    if (frameContents[1] == -1)
                     {
-                        frames[0][index] = frames[0][index - 1];
-                        frames[1][index] = frames[1][index - 1];
-                        frames[2][index] = frames[2][index - 1];
-                        frames[3][index] = "-";
+                        //Insert into the open frame
+                        frames[2][i] = "";
+                        frames[1][i] = frames[0][i - 1];
+                        frames[0][i] = ReferenceString[i].ToString();  //newest element
 
-                        if (frames[0][index] != ReferenceString[index].ToString()
-                            && frames[1][index] != ReferenceString[index].ToString()
-                            && frames[2][index] != ReferenceString[index].ToString())
-                        {
-                            frames[3][index] = "F";
-                            if (first == 3)
-                            {
-                                frames[0][index] = ReferenceString.ToString();
-                                first = 1;
-                                second++;
-                                third++;
-                            }
-                            else if (second == 3)
-                            {
-                                frames[1][index] = ReferenceString.ToString();
-                                second = 1;
-                                first++;
-                                second++;
-                            }
-                            else
-                            {
-                                frames[2][index] = ReferenceString.ToString();
-                                third = 1;
-                                first++;
-                                second++;
-                            }
-                        }
+                        //Push down the queue
+                        frameContents[1] = frameContents[0];
+                        frameContents[0] = ReferenceString[i];
+                        continue;
+                    }
+                    else if (frameContents[2] == -1)
+                    {
+                        //Insert into the open frame
+                        frames[2][i] = frames[1][i - 1];
+                        frames[1][i] = frames[0][i - 1];
+                        frames[0][i] = ReferenceString[i].ToString();
+
+                        //Push down the queue
+                        frameContents[2] = frameContents[1];
+                        frameContents[1] = frameContents[0];
+                        frameContents[0] = ReferenceString[i];
+                        continue;
                     }
 
+                    frameContents[2] = frameContents[1];
+                    frameContents[1] = frameContents[0];
+                    frameContents[0] = ReferenceString[i];
+
+                    //Update the frame table
+                    frames[0][i] = frameContents[0].ToString();
+                    frames[1][i] = frameContents[1].ToString();
+                    frames[2][i] = frameContents[2].ToString();
                 }
             }
 
-            return frames;
+            //return faults;  //Number of faults
+            return frames;  //4 rows, top 3 contains numbers, last row contains F's
         }
 
 
