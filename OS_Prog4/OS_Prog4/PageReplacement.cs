@@ -302,6 +302,61 @@ namespace OS_Prog4
             return frames;  //4 rows, top 3 contains numbers, last row contains F's
         }
 
+        public ObservableCollection<ObservableCollection<string>> fifo()
+        {
+            int next = 0;
+
+            //Skip the ordering if there are no references
+            if (ReferenceString.Count <= 0)
+            {
+                return new ObservableCollection<ObservableCollection<string>>();
+            }
+
+            //Array to store each frame iteration
+            ObservableCollection<ObservableCollection<string>> frames = new ObservableCollection<ObservableCollection<string>>();
+
+            frames[0][0] = ReferenceString[0].ToString();
+            frames[1][0] = "-";
+            frames[2][0] = "-";
+            frames[3][0] = "F";
+
+            if (ReferenceString.Count > 1)
+            {
+                frames[0][1] = frames[0][0];
+                frames[1][1] = ReferenceString[0].ToString();
+                frames[2][1] = "-";
+                frames[3][1] = "F";
+
+                if (ReferenceString.Count > 2)
+                {
+                    frames[0][2] = frames[0][0];
+                    frames[1][2] = frames[1][1];
+                    frames[2][2] = ReferenceString[2].ToString();
+                    frames[3][2] = "F";
+
+                    for (int index = 3; index < ReferenceString.Count; index++)
+                    {
+                        frames[0][index] = frames[0][index - 1];
+                        frames[1][index] = frames[1][index - 1];
+                        frames[2][index] = frames[2][index - 1];
+                        frames[3][index] = "-";
+
+                        if    (frames[0][index] != ReferenceString[index].ToString()
+                            && frames[1][index] != ReferenceString[index].ToString()
+                            && frames[2][index] != ReferenceString[index].ToString())
+                        {
+                            frames[3][index] = "F";
+                            frames[next][index] = ReferenceString[index].ToString();
+                            next = (next + 1 ) % 3;
+                        }
+                    }
+
+                }
+            }
+
+            return frames;
+        }
+
 
         public ObservableCollection<int> ReferenceString { get; set; }
         public int Length { get; set; }
