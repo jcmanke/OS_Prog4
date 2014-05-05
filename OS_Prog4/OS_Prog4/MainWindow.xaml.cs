@@ -220,6 +220,7 @@ namespace OS_Prog4
                     _currentAlgorithm = _pageReplacement.SecondChance();
                     break;
                 case "Clock":
+                    _currentAlgorithm = _pageReplacement.SecondChance();
                     break;
             }
 
