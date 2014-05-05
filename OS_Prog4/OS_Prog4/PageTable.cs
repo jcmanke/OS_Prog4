@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,11 +9,8 @@ namespace OS_Prog4
 {
     class PageTable
     {
-        private char[] pageTable = new char[]
-        {
-              '-','-','-','-','-','-','-','-' 
-        };
-        public char[] _PageTable
+        private ObservableCollection<char> pageTable;
+        public ObservableCollection<char> _PageTable
         {
             get
             {
@@ -28,8 +26,8 @@ namespace OS_Prog4
         int nextFrame = 0;
         bool showString = false;
 
-        private int[] buffer = new int[4] { -1, -1, -1, -1 };
-        public int[] TLB
+        private ObservableCollection<int> buffer;
+        public ObservableCollection<int> TLB
         {
             get
             {
@@ -38,6 +36,25 @@ namespace OS_Prog4
         }
 
         static string notFound = "Value was not found in the TLB";
+
+        public PageTable()
+        {
+            int i;
+
+            //initialize page table
+            pageTable = new ObservableCollection<char>();
+            for (i = 0; i < 8; i++)
+            {
+                pageTable.Add('-');
+            }
+
+            //initialize buffer
+            buffer = new ObservableCollection<int>();
+            for (i = 0; i < 4; i++)
+            {
+                buffer.Add(-1);
+            }
+        }
 
         public void resetTable()
         {

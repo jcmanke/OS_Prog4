@@ -322,7 +322,7 @@ namespace OS_Prog4
         //
         //Returns:  (nothing)
         //*******************************************************************//
-        private void ReorderByRoundRobin(uint quantum)
+        public void ReorderByRoundRobin(uint quantum)
         {
             //Verify the quantum value is valid
             if (quantum == 0)

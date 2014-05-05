@@ -18,7 +18,12 @@
                     <Label Content="Priority"/>
                     <StackPanel Name="PriorityPanel" Orientation="Horizontal" Height="30" Width="700" Margin="0,0,0,25"/>
 
-                    <Label Content="Round Robin"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Round Robin"/>
+                        <Label Content="Quantum: " Margin="20,0,0,0"/>
+                        <TextBox Width="20" Margin="0,0,10,0" Text="2" VerticalContentAlignment="Center" Name="QuantumTextbox"/>
+                        <Button Content="Set Quantum" Name="SetQuantumButton" Click="SetQuantumButton_Click_1"/>
+                    </StackPanel>
                     <StackPanel Name="RRPanel" Orientation="Horizontal" Height="30" Width="700" Margin="0,0,0,25"/>
                 </StackPanel>
                 
@@ -345,7 +350,41 @@
             
         </TabItem>
         
-        <TabItem Header="Page Replacement" Name="PageTab"></TabItem>
+        <TabItem Header="Page Replacement" Name="PageTab">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+                <Label Content="Algorithm" Grid.Row="0" HorizontalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+                    <RadioButton Content="FIFO" GroupName="ReplAlg" Margin="5,0,5,0" IsChecked="True" Checked="RadioButton_Checked_1"/>
+                    <RadioButton Content="LRU" GroupName="ReplAlg" Margin="5,0,5,0" Checked="RadioButton_Checked_1"/>
+                    <RadioButton Content="LFU" GroupName="ReplAlg" Margin="5,0,5,0" Checked="RadioButton_Checked_1"/>
+                    <RadioButton Content="Optimal" GroupName="ReplAlg" Margin="5,0,5,0" Checked="RadioButton_Checked_1"/>
+                    <RadioButton Content="Second Chance" GroupName="ReplAlg" Margin="5,0,5,0" Checked="RadioButton_Checked_1"/>
+                    <RadioButton Content="Clock" GroupName="ReplAlg" Margin="5,0,5,0" Checked="RadioButton_Checked_1"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Reference String: "/>
+                        <Label Name="ReferenceStringLabel"/>
+                    </StackPanel>
+                    <DataGrid Name="PageStack">
+                        
+                    </DataGrid>
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Height="30">
+                    <Label Content="Number of Pages: "/>
+                    <TextBox Name="NumPages" Width="50"/>
+                    <Label Content="Reference String Length: "/>
+                    <TextBox Name="RefStringLength" Width="50"/>
+                    <Button Name="GenerateRefStringButton" Content="Generate String" Click="GenerateRefStringButton_Click_1"/>
+                </StackPanel>
+            </Grid>
+        </TabItem>
     </TabControl>
     
 </Window>

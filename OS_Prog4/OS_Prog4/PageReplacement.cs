@@ -301,7 +301,7 @@ namespace OS_Prog4
             //return faults;  //Number of faults
             return frames;  //4 rows, top 3 contains numbers, last row contains F's
         }
-         
+
 
         public ObservableCollection<int> ReferenceString { get; set; }
         public int Length { get; set; }

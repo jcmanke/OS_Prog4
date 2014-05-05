@@ -23,6 +23,7 @@ namespace OS_Prog4
     {
         private ProcessScheduler _scheduler;
         private PageTable _pageTable;
+        private PageReplacement _pageReplacement;
 
         //*******************************************************************//
         //Author: Joe Manke, Josh Schultz
@@ -43,6 +44,8 @@ namespace OS_Prog4
             _scheduler = new ProcessScheduler(2, this);
 
             _pageTable = new PageTable();
+
+            _pageReplacement = new PageReplacement();
         }
 
 
@@ -158,7 +161,7 @@ namespace OS_Prog4
             }
             else if (PageTab.IsSelected)
             {
-                
+                DataContext = _pageReplacement; 
             }
         }
 
@@ -180,6 +183,73 @@ namespace OS_Prog4
             catch
             {
                 MessageBox.Show("Error parsing inputs. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void RadioButton_Checked_1(object sender, RoutedEventArgs e)
+        {
+            RadioButton button = sender as RadioButton;
+
+            switch (button.Content.ToString())
+            {
+                case "FIFO":
+                    break;
+                case "LRU":
+                    break;
+                case "LFU":
+                    break;
+                case "Optimal":
+                    break;
+                case "Second Chance":
+                    PageStack.ItemsSource = _pageReplacement.SecondChance();
+                    break;
+                case "Clock":
+                    break;
+            }
+        }
+
+        private void GenerateRefStringButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            int length, pageCount;
+            try
+            {
+                if (Int32.TryParse(RefStringLength.Text, out length) && Int32.TryParse(NumPages.Text, out pageCount))
+                {
+                    _pageReplacement.Length = length;
+                    _pageReplacement.MaxPageValue = pageCount;
+                    _pageReplacement.GenerateReferenceString();
+
+                    //show reference string in GUI
+                    StringBuilder temp = new StringBuilder();
+                    foreach (int i in _pageReplacement.ReferenceString)
+                    {
+                        temp.Append(i).Append(' ');
+                    }
+                    ReferenceStringLabel.Content = temp.ToString();
+                }
+                else
+                {
+                    MessageBox.Show("Error parsing inputs. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Error parsing inputs. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void SetQuantumButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            uint quantum;
+
+            if (UInt32.TryParse(QuantumTextbox.Text, out quantum))
+            {
+                _scheduler.Quantum = quantum;
+                _scheduler.ReorderByRoundRobin(quantum);
+            }
+            else
+            {
+                MessageBox.Show("Error parsing input. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
