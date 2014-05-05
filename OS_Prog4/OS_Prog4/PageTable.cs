@@ -37,6 +37,18 @@ namespace OS_Prog4
 
         static string notFound = "Value was not found in the TLB";
 
+
+        //*******************************************************************//
+        //Author: Adam Meaney
+        //
+        //Date: May 3, 2014
+        //
+        //Description:  Constructor, initiallizes the class
+        //
+        //Parameters:   (nothing)
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
         public PageTable()
         {
             int i;
@@ -56,6 +68,18 @@ namespace OS_Prog4
             }
         }
 
+
+        //*******************************************************************//
+        //Author: Adam Meaney
+        //
+        //Date: May 3, 2014
+        //
+        //Description:  Empties the page table with hypens
+        //
+        //Parameters:   (nothing)
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
         public void resetTable()
         {
             for ( int i = 0; i < 8; i++ )
@@ -64,6 +88,19 @@ namespace OS_Prog4
             }
         }
 
+
+        //*******************************************************************//
+        //Author: Adam Meaney
+        //
+        //Date: May 3, 2014
+        //
+        //Description:  Looks up the frame value given a page and offset
+        //
+        //Parameters:   page - page to lookup
+        //              offset - Offset of page
+        //
+        //Returns:  the value in the physical memory
+        //*******************************************************************//
         public int goPushed(int page, int offset)
         {
             char frame = pageTable[page];
@@ -82,6 +119,18 @@ namespace OS_Prog4
             return frameList[(int)Char.GetNumericValue(frame), offset];
         }
 
+
+        //*******************************************************************//
+        //Author: Adam Meaney
+        //
+        //Date: May 3, 2014
+        //
+        //Description:  Replaces the TLB with a FIFO algorithm
+        //
+        //Parameters:   page - new page to insert
+        //
+        //Returns:  (nothing)
+        //*******************************************************************//
         public void updateTLB(int page)
         {
             if (buffer[0] == page || buffer[2] == page)
@@ -92,6 +141,19 @@ namespace OS_Prog4
             buffer[1] = (int) Char.GetNumericValue(pageTable[page]);
         }
 
+
+        //*******************************************************************//
+        //Author: Adam Meaney
+        //
+        //Date: May 3, 2014
+        //
+        //Description:  Determines if a page is in the TLB or not.
+        //
+        //Parameters:   page - Page number to check
+        //
+        //Returns:  True - The value is in the TLB
+        //          False - The page is not in the TLB
+        //*******************************************************************//
         public bool checkTLB(int page)
         {
             if (buffer[0] == page || buffer[2] == page)

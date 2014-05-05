@@ -74,7 +74,7 @@ namespace OS_Prog4
             for (int i = 0; i < Length; i++)
             {
                 //Generate a new random number and put it into the reference string
-                int nextValue = r.Next(1, MaxPageValue);
+                int nextValue = r.Next(1, MaxPageValue+1);
                 ReferenceString.Add(nextValue);
 
                 //Verify the random values aren't generated the same for multiple iterations
@@ -733,7 +733,20 @@ namespace OS_Prog4
         }
 
 
-
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: May 2, 2014
+        //
+        //Description:  This method uses the public property, ReferenceString
+        //              to simulate the contents of three frames at each iteration.
+        //              The simulation is based on an least frequently used
+        //              page replacement.
+        //
+        //Parameters:   (nothing)
+        //
+        //Returns:  frames - conents of frames through each iteration 
+        //*******************************************************************//
         public ObservableCollection<ObservableCollection<string>> LeastFrequentlyUsed()
         {
             //Skip the ordering if there are no references
@@ -927,6 +940,20 @@ namespace OS_Prog4
             return frames;  //4 rows, top 3 contains numbers, last row contains F's
         }
 
+
+        //*******************************************************************//
+        //Author: Josh Schultz
+        //
+        //Date: May 2, 2014
+        //
+        //Description:  Given the current contents of a frame, and the number
+        //              of references for each page, this function reorders
+        //              the frames based on the number of references.
+        //
+        //Parameters:   (nothing)
+        //
+        //Returns:  frames - conents of frames through each iteration 
+        //*******************************************************************//
         private void Reorder(List<int> frameContents, List<int> referenceCounts, int lastReferenced)
         {
             List<int> newOrder = new List<int>(3);

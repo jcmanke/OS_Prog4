@@ -129,8 +129,8 @@ namespace OS_Prog4
                 Random rand = new Random();
 
                 //Randomness
-                uint priority = (uint)rand.Next(0,5);
-                uint startTime = (uint)rand.Next(0,20);
+                uint priority = (uint)rand.Next(1,6);
+                uint startTime = (uint)rand.Next(0,10);
                 uint duration = (uint)rand.Next(1,6);
 
                 //Add the process to the list
