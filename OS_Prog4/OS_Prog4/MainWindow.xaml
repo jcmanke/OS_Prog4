@@ -370,7 +370,7 @@
                     <RadioButton Content="Clock" GroupName="ReplAlg" Margin="5,0,5,0" Checked="RadioButton_Checked_1"/>
                 </StackPanel>
                 <StackPanel Grid.Row="2">
-                    <Grid Name="PageStack" Height="150" Margin="10,0,10,0">
+                    <Grid Name="PageStack" Height="150" Width="1100">
                         <Grid.RowDefinitions>
                             <RowDefinition/>
                             <RowDefinition/>

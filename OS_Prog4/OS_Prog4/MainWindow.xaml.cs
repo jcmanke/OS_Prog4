@@ -233,6 +233,8 @@ namespace OS_Prog4
             {
                 PageStack.Children.OfType<Border>().ToList().ForEach(o => PageStack.Children.Remove(o));
                 PageStack.Children.OfType<TextBlock>().ToList().ForEach(o => PageStack.Children.Remove(o));
+                PageStack.ColumnDefinitions.Clear();
+                PageStack.ColumnDefinitions.Add(LabelsColumn);
 
                 for (int i = 0; i < _pageReplacement.ReferenceString.Count; i++)
                 {
